@@ -1,1 +1,1 @@
-# CookAssistant-Server
+# cook-assistant-server
