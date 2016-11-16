@@ -2,7 +2,6 @@ var Recipe = require('../models/recipe');
 
 exports.postRecipe = function(req, res) {
   var recipe = new Recipe();
-
   recipe.title = req.body.title;
   recipe.userId = req.user._id;
 

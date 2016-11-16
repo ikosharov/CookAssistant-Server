@@ -18,9 +18,7 @@ router.route('/recipes/:recipe_id')
     .put(authController.isAuthenticated, recipesController.putRecipe)
     .delete(authController.isAuthenticated, recipesController.deleteRecipe);
 
-// Create endpoint handlers for /users
 router.route('/users')
-    .post(usersController.postUsers)
-    .get(usersController.getUsers);
+    .post(usersController.postUsers);
 
 module.exports = router;
