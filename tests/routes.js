@@ -148,40 +148,30 @@ describe('routes', function () {
                 });
         });
 
-        //     it('should be able to update todos', function (done) {
-        //         // sign in the shared user
-        //         request(url)
-        //             .post('/login')
-        //             .send(sharedUser)
-        //             .end(function (err, res) {
-        //                 var token = res.body.token;
+        it('should be able to update recipes', function (done) {
+            request(url)
+                .get('/recipes')
+                .set('Authorization', "Basic " + sharedUserEncodedCredentials)
+                .end(function (err, res) {
 
-        //                 // get all todos
-        //                 request(url)
-        //                     .get("/api/todos")
-        //                     .set('access_token', token)
-        //                     .end(function (err, res) {
+                    // find the recipeOfSharedUser which we know already exists
+                    var idx = _.findIndex(res.body, function (recipe) {
+                        return recipe._id == recipeOfSharedUser._id;
+                    });
 
-        //                         // find the sharedUserTodo which we know already exists
-        //                         var idx = _.findIndex(res.body, function (todo) {
-        //                             return todo._id == todoOfSharedUser._id;
-        //                         });
+                    // modify the recipe
+                    var recipe = res.body[idx];
+                    recipe.title = "modified";
 
-        //                         // modify the todo returned from the server
-        //                         var todo = res.body[idx];
-        //                         todo.title = "modified";
-        //                         todo.isDone = true;
-
-        //                         // send the modified todo back to the server
-        //                         request(url)
-        //                             .put("/api/todos/" + todo._id)
-        //                             .set("access_token", token)
-        //                             .end(function (err, res) {
-        //                                 assert.equal(200, res.status);
-        //                                 done();
-        //                             });
-        //                     });
-        //             });
-        //     });
+                    // send the modified recipes back to the server
+                    request(url)
+                        .put("/recipes/" + recipe._id)
+                        .set('Authorization', "Basic " + sharedUserEncodedCredentials)
+                        .end(function (err, res) {
+                            assert.equal(200, res.status);
+                            done();
+                        });
+                });
+        });
     });
 });

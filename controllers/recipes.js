@@ -45,6 +45,6 @@ exports.deleteRecipe = function (req, res) {
     if (err)
       res.send(err);
 
-    res.res.sendStatus(204);
+    res.sendStatus(204);
   });
 };
