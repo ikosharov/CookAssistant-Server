@@ -36,3 +36,12 @@ exports.signIn = function (req, res) {
     }
   });
 }
+
+exports.getUser = function (req, res) {
+  User.find({ _id: req.params.user_id, _id: req.user._id }, function (err, user) {
+    if (err)
+      res.send(err);
+
+    res.json(user);
+  });
+}

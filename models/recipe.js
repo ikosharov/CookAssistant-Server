@@ -8,6 +8,10 @@ var RecipeSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: true
+  },
+  public: {
+    type: Boolean,
+    require: true
   }
 });
 
