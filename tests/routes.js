@@ -59,7 +59,7 @@ describe('routes', function () {
                 .get('/')
                 .end(function (err, res) {
                     assert.equal(200, res.status);
-                    assert.equal('Hello authenticated dude!', res.text);
+                    assert.equal('Hello from Recipes API', res.text);
                     done();
                 });
         });
