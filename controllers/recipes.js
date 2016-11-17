@@ -54,7 +54,7 @@ exports.putUserRecipe = function (req, res) {
     if (err)
       res.send(err);
 
-    res.json({ message: num + ' updated' });
+    res.sendStatus(204);
   });
 };
 
