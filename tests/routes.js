@@ -1,6 +1,5 @@
 var assert = require('assert');
 var request = require('supertest');
-var config = require('./config.js');
 var _ = require('lodash');
 
 describe('Routes', function () {
@@ -37,8 +36,8 @@ describe('Routes', function () {
 
 				// create the recipe of the shared user
 				request(url)
-					.post("/recipes")
-					.set('access_token', res.body.token)
+					.post("/recipes/personal")
+					.set('Authorization', `JWT ${res.body.token}`)
 					.send(recipeOfSharedUser)
 					.end(function (err, res) {
 						if (err) {
@@ -58,14 +57,14 @@ describe('Routes', function () {
 				.get('/')
 				.end(function (err, res) {
 					assert.equal(200, res.status);
-					assert.equal('hello from recipes API', res.text);
+					assert.equal('Hello from Recipes API', res.text);
 					done();
 				});
 		});
 	});
 
-	describe('auth controller', function () {
-		it('should be able to register users', function (done) {
+	describe('users controller', function () {
+		it('should be able to sign up users', function (done) {
 			// generate random user
 			var credentials = {
 				username: 'user' + generateRandomString(),
@@ -91,10 +90,10 @@ describe('Routes', function () {
 		it('should be able to sign in users', function (done) {
 			// sign in the shared user
 			request(url)
-				.post('/login')
+				.post('/signin')
 				.send(sharedUser)
 				.end(function (err, res) {
-					if(err) {
+					if (err) {
 						throw err;
 					}
 
@@ -110,12 +109,12 @@ describe('Routes', function () {
 		it('should be able to get recipes', function (done) {
 			// sign in the shared user
 			request(url)
-				.post('/login')
+				.post('/signin')
 				.send(sharedUser)
 				.end(function (err, res) {
 					request(url)
-						.get("/recipes")
-						.set('access_token', res.body.token)
+						.get("/recipes/personal")
+						.set('Authorization', `JWT ${res.body.token}`)
 						.expect('Content-Type', /json/)
 						.end(function (err, res) {
 							if (err) {
@@ -145,14 +144,14 @@ describe('Routes', function () {
 
 			// sign in the shared user
 			request(url)
-				.post('/login')
+				.post('/signin')
 				.send(sharedUser)
 				.end(function (err, res) {
 					var token = res.body.token;
 					request(url)
-						.post("/recipes")
+						.post("/recipes/personal")
 						.send(recipe)
-						.set('access_token', token)
+						.set('Authorization', `JWT ${res.body.token}`)
 						.end(function (err, res) {
 							if (err) {
 								throw err;
@@ -168,8 +167,8 @@ describe('Routes', function () {
 
 							// delete the recipe we just created
 							request(url)
-								.del("/recipes/" + res.body._id)
-								.set('access_token', token)
+								.del("/recipes/personal/" + res.body._id)
+								.set('Authorization', `JWT ${token}`)
 								.end(function (err, res) {
 									if (err) {
 										throw err;
@@ -185,15 +184,15 @@ describe('Routes', function () {
 		it('should be able to update recipes', function (done) {
 			// sign in the shared user
 			request(url)
-				.post('/login')
+				.post('/signin')
 				.send(sharedUser)
 				.end(function (err, res) {
 					var token = res.body.token;
-					
+
 					// get all recipes
 					request(url)
-						.get("/recipes")
-						.set('access_token', token)
+						.get("/recipes/personal")
+						.set('Authorization', `JWT ${token}`)
 						.end(function (err, res) {
 
 							// find the sharedUserrecipe which we know already exists
@@ -204,12 +203,11 @@ describe('Routes', function () {
 							// modify the recipe returned from the server
 							var recipe = res.body[idx];
 							recipe.title = "modified";
-							recipe.isDone = true;
 
 							// send the modified recipe back to the server
 							request(url)
-								.put("/recipes/" + recipe._id)
-								.set("access_token", token)
+								.put("/recipes/personal/" + recipe._id)
+								.set('Authorization', `JWT ${token}`)
 								.end(function (err, res) {
 									assert.equal(200, res.status);
 									done();

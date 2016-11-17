@@ -63,6 +63,6 @@ exports.deleteUserRecipe = function (req, res) {
     if (err)
       res.send(err);
 
-    res.sendStatus(204);
+    res.sendStatus(200);
   });
 };

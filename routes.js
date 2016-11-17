@@ -8,10 +8,10 @@ var authController = require('./controllers/auth');
 router.route('/')
     .get(welcomeController.greet);
 
-router.route('/users/signup')
+router.route('/signup')
     .post(usersController.signUp);
 
-router.route('/users/signin')
+router.route('/signin')
     .post(usersController.signIn);
 
 router.route('/users/:user_id')
