@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/routes.js"
+    "test": "mocha tests/routes.js",
+    "test-debug": "mocha tests/routes.js --debug-brk"
   },
   "repository": {
     "type": "git",
