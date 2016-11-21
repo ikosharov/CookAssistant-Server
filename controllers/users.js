@@ -27,13 +27,21 @@ exports.signIn = function (req, res) {
   var username = req.body.username || '';
   var password = req.body.password || '';
 
-  User.findOne({ username: username, password: password }, function (err, user) {
-    if (!user) {
-      res.satatus(401).send({ message: 'invalid username or password' });
-    } else {
+  User.findOne({ username: username }, function (err, user) {
+    if (err || !user) {
+      res.status(401).send({ message: 'invalid username or password' });
+      return;
+    }
+
+    user.verifyPassword(password, function (err, isMatch) {
+      if (err || !isMatch) {
+        res.status(401).send({ message: 'invalid username or password' });
+        return;
+      }
+
       var token = jwt.sign(user, config.tokenSecret);
       res.json({ token: token });
-    }
+    });
   });
 }
 
