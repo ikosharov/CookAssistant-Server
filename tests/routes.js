@@ -20,33 +20,55 @@ describe('Routes', function () {
     var otherUser = {
         username: "other" + generateRandomString(),
         password: "password"
-    }
-
-    // recipes that will be reused between tests
-    var recipeOfSharedUser = {
-        title: "potatoes"
     };
 
-    var recipeOfOtherUser = {
-        title: "potatoes"
+    // recipes that will be reused between tests
+    var privateRecipeOfSharedUser = {
+        title: "potatoes",
+        public: "false"
+    };
+
+    var publicRecipeOfSharedUser = {
+        title: "potatoes",
+        public: "true"
+    };
+
+    var privateRecipeOfOtherUser = {
+        title: "potatoes",
+        public: "false"
+    };
+
+    var publicRecipeOfOtherUser = {
+        title: "potatoes",
+        public: "true"
     };
 
     before(function (done) {
-        // create the shared user and one recipe for it
+        // create shared user and its recipes
         var p1 = new Promise(function (resolve, reject) {
             request(url)
                 .post('/signup')
                 .send(sharedUser)
                 .end(function (err, res) {
                     if (err) reject();
+                    var token = res.body.token;
                     request(url)
                         .post("/recipes/personal")
-                        .set('Authorization', `JWT ${res.body.token}`)
-                        .send(recipeOfSharedUser)
+                        .set('Authorization', 'JWT ' + token)
+                        .send(privateRecipeOfSharedUser)
                         .end(function (err, res) {
                             if (err) reject();
-                            recipeOfSharedUser._id = res.body._id;
-                            resolve();
+                            privateRecipeOfSharedUser._id = res.body._id;
+
+                            request(url)
+                                .post("/recipes/personal")
+                                .set('Authorization', 'JWT ' + token)
+                                .send(publicRecipeOfSharedUser)
+                                .end(function (err, res) {
+                                    if (err) reject();
+                                    publicRecipeOfSharedUser._id = res.body._id;
+                                    resolve();
+                                });
                         });
                 });
         });
@@ -58,14 +80,24 @@ describe('Routes', function () {
                 .send(otherUser)
                 .end(function (err, res) {
                     if (err) reject();
+                    var token = res.body.token;
                     request(url)
                         .post("/recipes/personal")
-                        .set('Authorization', `JWT ${res.body.token}`)
-                        .send(recipeOfOtherUser)
+                        .set('Authorization', 'JWT ' + token)
+                        .send(privateRecipeOfOtherUser)
                         .end(function (err, res) {
                             if (err) reject();
-                            recipeOfOtherUser._id = res.body._id;
-                            resolve();
+                            privateRecipeOfOtherUser._id = res.body._id;
+
+                            request(url)
+                                .post("/recipes/personal")
+                                .set('Authorization', 'JWT ' + token)
+                                .send(publicRecipeOfOtherUser)
+                                .end(function (err, res) {
+                                    if (err) reject();
+                                    publicRecipeOfOtherUser._id = res.body._id;
+                                    resolve();
+                                });
                         });
                 });
         });
@@ -89,58 +121,58 @@ describe('Routes', function () {
         });
     });
 
-    describe('users controller', function () {
-        it('should be able to sign up users', function (done) {
-            // generate random user
-            var credentials = {
-                username: 'user' + generateRandomString(),
-                password: 'password1'
-            }
+    // describe('users controller', function () {
+    //     it('should be able to sign up users', function (done) {
+    //         // generate random user
+    //         var credentials = {
+    //             username: 'user' + generateRandomString(),
+    //             password: 'password1'
+    //         }
 
-            // register the user
-            request(url)
-                .post('/signup')
-                .send(credentials)
-                .end(function (err, res) {
-                    if (err) {
-                        throw err;
-                    }
+    //         // register the user
+    //         request(url)
+    //             .post('/signup')
+    //             .send(credentials)
+    //             .end(function (err, res) {
+    //                 if (err) {
+    //                     throw err;
+    //                 }
 
-                    // check you get status 200 and an access token
-                    assert.equal(200, res.status);
-                    assert(res.body.token);
-                    done();
-                });
-        });
+    //                 // check you get status 200 and an access token
+    //                 assert.equal(200, res.status);
+    //                 assert(res.body.token);
+    //                 done();
+    //             });
+    //     });
 
-        it('should be able to sign in users', function (done) {
-            // sign in the shared user
-            request(url)
-                .post('/signin')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    if (err) {
-                        throw err;
-                    }
+    //     it('should be able to sign in users', function (done) {
+    //         // sign in the shared user
+    //         request(url)
+    //             .post('/signin')
+    //             .send(sharedUser)
+    //             .end(function (err, res) {
+    //                 if (err) {
+    //                     throw err;
+    //                 }
 
-                    // make sure you get status 200 and an access token
-                    assert.equal(200, res.status);
-                    assert(res.body.token);
-                    done();
-                });
-        });
+    //                 // make sure you get status 200 and an access token
+    //                 assert.equal(200, res.status);
+    //                 assert(res.body.token);
+    //                 done();
+    //             });
+    //     });
 
-        it('should not be able to overwrite users', function (done) {
-            // try to register the already registered shared user
-            request(url)
-                .post('/signup')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    assert(!res.body.token);
-                    done();
-                });
-        })
-    });
+    //     it('should not be able to overwrite users', function (done) {
+    //         // try to register the already registered shared user
+    //         request(url)
+    //             .post('/signup')
+    //             .send(sharedUser)
+    //             .end(function (err, res) {
+    //                 assert(!res.body.token);
+    //                 done();
+    //             });
+    //     })
+    // });
 
     // describe("recipes controller", function() {
     //     it('should be able to get recipes', function(done) {

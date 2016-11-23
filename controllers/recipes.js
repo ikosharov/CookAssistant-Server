@@ -39,6 +39,7 @@ exports.getUserRecipe = function (req, res) {
 exports.postUserRecipe = function (req, res) {
   var recipe = new Recipe();
   recipe.title = req.body.title;
+  recipe.public = req.body.public;
   recipe.userId = req.user._id;
 
   recipe.save(function (err) {

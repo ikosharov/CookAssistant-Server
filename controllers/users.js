@@ -18,7 +18,7 @@ exports.signUp = function (req, res) {
     } else {
       var token = jwt.sign(user, config.tokenSecret);
 
-      res.json({ token: token });
+      res.send({ token: token });
     }
   });
 };
@@ -40,7 +40,7 @@ exports.signIn = function (req, res) {
       }
 
       var token = jwt.sign(user, config.tokenSecret);
-      res.json({ token: token });
+      res.send({ token: token });
     });
   });
 }
