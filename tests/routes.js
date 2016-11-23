@@ -71,8 +71,8 @@ describe('Routes', function () {
                                     request(url)
                                         .get('/currentUser')
                                         .set('Authorization', 'JWT ' + token)
-                                        .end(function(err, res) {
-                                            if(err) reject();
+                                        .end(function (err, res) {
+                                            if (err) reject();
                                             sharedUser._id = res.body._id;
                                             resolve();
                                         });
@@ -108,8 +108,8 @@ describe('Routes', function () {
                                     request(url)
                                         .get('/currentUser')
                                         .set('Authorization', 'JWT ' + token)
-                                        .end(function(err, res) {
-                                            if(err) reject();
+                                        .end(function (err, res) {
+                                            if (err) reject();
                                             otherUser._id = res.body._id;
                                             resolve();
                                         });
@@ -256,7 +256,7 @@ describe('Routes', function () {
 
                             assert.equal(200, res.status);
                             assert(Array.isArray(res.body));
-                            
+
                             var recipes = res.body;
                             assert(recipes.length > 0);
                             recipes.forEach(function (recipe) {
@@ -283,7 +283,7 @@ describe('Routes', function () {
 
                             assert.equal(200, res.status);
                             assert(Array.isArray(res.body));
-                            
+
                             var recipes = res.body;
                             assert(recipes.length > 0);
                             recipes.forEach(function (recipe) {
@@ -316,7 +316,7 @@ describe('Routes', function () {
         });
 
         it('user should be able to get specific personal recipe', function (done) {
-             request(url)
+            request(url)
                 .post('/signin')
                 .send(sharedUser)
                 .end(function (err, res) {
@@ -336,86 +336,84 @@ describe('Routes', function () {
                 });
         });
 
-        //     it('should be able to create and delete recipes', function(done) {
-        //         // generate some recipe
-        //         var recipe = {
-        //             title: "temp task",
-        //             dueDate: new Date(),
-        //             isDone: false
-        //         }
+        it('user should be able to create and delete recipes', function (done) {
+            // generate some recipe
+            var recipe = {
+                title: "new recipe",
+                public: false,
+            }
 
-        //         // sign in the shared user
-        //         request(url)
-        //             .post('/signin')
-        //             .send(sharedUser)
-        //             .end(function(err, res) {
-        //                 var token = res.body.token;
-        //                 request(url)
-        //                     .post("/recipes/personal")
-        //                     .send(recipe)
-        //                     .set('Authorization', `JWT ${res.body.token}`)
-        //                     .end(function(err, res) {
-        //                         if (err) {
-        //                             throw err;
-        //                         }
+            // sign in the shared user
+            request(url)
+                .post('/signin')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    var token = res.body.token;
+                    request(url)
+                        .post("/recipes/personal")
+                        .send(recipe)
+                        .set('Authorization', `JWT ${token}`)
+                        .end(function (err, res) {
+                            if (err) {
+                                throw err;
+                            }
 
-        //                         // make sure you get status 200 and the recipe you just created 
-        //                         // make sure it now has _id property
-        //                         assert.equal(200, res.status);
-        //                         assert.ok(res.body._id);
-        //                         assert.ok(res.body.title);
-        //                         assert.ok(res.body.dueDate);
-        //                         assert.ok(res.body.isDone != null);
+                            assert.equal(200, res.status);
+                            assert.ok(res.body._id);
+                            assert.ok(res.body.title);
+                            assert.ok(typeof (res.body.public) != 'undefined');
 
-        //                         // delete the recipe we just created
-        //                         request(url)
-        //                             .del("/recipes/personal/" + res.body._id)
-        //                             .set('Authorization', `JWT ${token}`)
-        //                             .end(function(err, res) {
-        //                                 if (err) {
-        //                                     throw err;
-        //                                 }
-        //                                 // make sure we get status 204. nothing else is returned
-        //                                 assert.equal(204, res.status);
-        //                                 done();
-        //                             });
-        //                     });
-        //             });
-        //     });
+                            // delete the recipe we just created
+                            request(url)
+                                .del("/recipes/personal/" + res.body._id)
+                                .set('Authorization', `JWT ${token}`)
+                                .end(function (err, res) {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                    // make sure we get status 204. nothing else is returned
+                                    assert.equal(204, res.status);
+                                    done();
+                                });
+                        });
+                });
+        });
 
-        //     it('should be able to update recipes', function(done) {
-        //         // sign in the shared user
-        //         request(url)
-        //             .post('/signin')
-        //             .send(sharedUser)
-        //             .end(function(err, res) {
-        //                 var token = res.body.token;
+        it('user should be able to update recipes', function (done) {
+            request(url)
+                .post('/signin')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    var token = res.body.token;
 
-        //                 // get all recipes
-        //                 request(url)
-        //                     .get("/recipes/personal")
-        //                     .set('Authorization', `JWT ${token}`)
-        //                     .end(function(err, res) {
+                    // get all recipes
+                    request(url)
+                        .get("/recipes/personal")
+                        .set('Authorization', `JWT ${token}`)
+                        .end(function (err, res) {
 
-        //                         // find the sharedUserrecipe which we know already exists
-        //                         var idx = _.findIndex(res.body, function(recipe) {
-        //                             return recipe._id == recipeOfSharedUser._id;
-        //                         });
+                            // find the sharedUserrecipe which we know already exists
+                            var idx = _.findIndex(res.body, function (recipe) {
+                                return recipe._id == privateRecipeOfSharedUser._id;
+                            });
 
-        //                         // modify the recipe returned from the server
-        //                         var recipe = res.body[idx];
-        //                         recipe.title = "modified";
+                            // modify the recipe returned from the server
+                            var recipe = res.body[idx];
+                            recipe.title = "modified";
 
-        //                         // send the modified recipe back to the server
-        //                         request(url)
-        //                             .put("/recipes/personal/" + recipe._id)
-        //                             .set('Authorization', `JWT ${token}`)
-        //                             .end(function(err, res) {
-        //                                 assert.equal(200, res.status);
-        //                                 done();
-        //                             });
-        //                     });
-        //             });
-        //     });
+                            // send the modified recipe back to the server
+                            request(url)
+                                .put("/recipes/personal/" + recipe._id)
+                                .set('Authorization', `JWT ${token}`)
+                                .end(function (err, res) {
+                                    assert.equal(204, res.status);
+                                    done();
+                                });
+                        });
+                });
+        });
+
+        // user should not be able to delete recipe of another user
+        // user should not be able to update recipe of another user
     });
 });

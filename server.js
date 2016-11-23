@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var router = require('./routes');
 var config = require('./web.config');
 
+mongoose.Promise = global.Promise;
 mongoose.connect(config.databaseUrl);
 
 var port = process.env.PORT || 3000;
