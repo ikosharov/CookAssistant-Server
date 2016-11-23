@@ -14,8 +14,8 @@ router.route('/signup')
 router.route('/signin')
     .post(usersController.signIn);
 
-router.route('/users/:user_id')
-    .get(authController.isAuthenticated, usersController.getUser);
+router.route('/currentUser')
+    .get(authController.isAuthenticated, usersController.currentUser);
 
 router.route('/recipes/personal')
     .get(authController.isAuthenticated, recipesController.getUserRecipes)

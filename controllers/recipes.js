@@ -10,7 +10,7 @@ exports.getPublicRecipes = function (req, res) {
 };
 
 exports.getPublicRecipe = function (req, res) {
-  Recipe.find( { _id: req.params.recipe_id, public: true }, function (err, recipe) {
+  Recipe.findOne( { _id: req.params.recipe_id, public: true }, function (err, recipe) {
     if (err)
       res.send(err);
 
@@ -28,7 +28,7 @@ exports.getUserRecipes = function (req, res) {
 };
 
 exports.getUserRecipe = function (req, res) {
-  Recipe.find( { userId: req.user._id, _id: req.params.recipe_id }, function (err, recipe) {
+  Recipe.findOne( { userId: req.user._id, _id: req.params.recipe_id }, function (err, recipe) {
     if (err)
       res.send(err);
 
