@@ -121,58 +121,112 @@ describe('Routes', function () {
         });
     });
 
-    // describe('users controller', function () {
-    //     it('should be able to sign up users', function (done) {
-    //         // generate random user
-    //         var credentials = {
-    //             username: 'user' + generateRandomString(),
-    //             password: 'password1'
-    //         }
+    describe('users controller', function () {
+        it('should be able to sign up users', function (done) {
+            // generate random user
+            var credentials = {
+                username: 'user' + generateRandomString(),
+                password: 'password1'
+            }
 
-    //         // register the user
-    //         request(url)
-    //             .post('/signup')
-    //             .send(credentials)
-    //             .end(function (err, res) {
-    //                 if (err) {
-    //                     throw err;
-    //                 }
+            // register the user
+            request(url)
+                .post('/signup')
+                .send(credentials)
+                .end(function (err, res) {
+                    if (err) {
+                        throw err;
+                    }
 
-    //                 // check you get status 200 and an access token
-    //                 assert.equal(200, res.status);
-    //                 assert(res.body.token);
-    //                 done();
-    //             });
-    //     });
+                    // check you get status 200 and an access token
+                    assert.equal(200, res.status);
+                    assert(res.body.token);
+                    done();
+                });
+        });
 
-    //     it('should be able to sign in users', function (done) {
-    //         // sign in the shared user
-    //         request(url)
-    //             .post('/signin')
-    //             .send(sharedUser)
-    //             .end(function (err, res) {
-    //                 if (err) {
-    //                     throw err;
-    //                 }
+        it('should be able to sign in users', function (done) {
+            // sign in the shared user
+            request(url)
+                .post('/signin')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    if (err) {
+                        throw err;
+                    }
 
-    //                 // make sure you get status 200 and an access token
-    //                 assert.equal(200, res.status);
-    //                 assert(res.body.token);
-    //                 done();
-    //             });
-    //     });
+                    // make sure you get status 200 and an access token
+                    assert.equal(200, res.status);
+                    assert(res.body.token);
+                    done();
+                });
+        });
 
-    //     it('should not be able to overwrite users', function (done) {
-    //         // try to register the already registered shared user
-    //         request(url)
-    //             .post('/signup')
-    //             .send(sharedUser)
-    //             .end(function (err, res) {
-    //                 assert(!res.body.token);
-    //                 done();
-    //             });
-    //     })
-    // });
+        it('should not be able to overwrite users', function (done) {
+            // try to register the already registered shared user
+            request(url)
+                .post('/signup')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    assert(!res.body.token);
+                    done();
+                });
+        });
+
+        it('should not be able to sign up with invalid credentials', function (done) {
+            var invalidCredentials = {
+                username: "aa",
+                password: "bb"
+            };
+            request(url)
+                .post('/signup')
+                .send(invalidCredentials)
+                .end(function (err, res) {
+                    assert(!res.body.token);
+                    done();
+                });
+        });
+
+        it('should not be able to sign up with missing password', function (done) {
+            var missingPasswordCredentials = {
+                username: "someuser"
+            };
+            request(url)
+                .post('/signup')
+                .send(missingPasswordCredentials)
+                .end(function (err, res) {
+                    assert(!res.body.token);
+                    done();
+                });
+        });
+
+        it('should not be able to sign in with invalid credentials', function (done) {
+            var invalidCredentials = {
+                username: sharedUser.username,
+                password: "ivalidPassword"
+            };
+            request(url)
+                .post('/signin')
+                .send(invalidCredentials)
+                .end(function (err, res) {
+                    assert(!res.body.token);
+                    done();
+                });
+        });
+
+        it('should not be able to sign in with missing password', function (done) {
+            var missingPasswordCredentials = {
+                username: "someuser"
+            };
+            request(url)
+                .post('/signin')
+                .send(missingPasswordCredentials)
+                .end(function (err, res) {
+                    assert(!res.body.token);
+                    done();
+                });
+        });
+    });
 
     // describe("recipes controller", function() {
     //     it('should be able to get recipes', function(done) {

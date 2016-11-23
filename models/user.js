@@ -2,16 +2,32 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 
+var usernameValidator = [
+    function (val) {
+        return val.length >= 4;
+    },
+    "username should be at least 4 characters"
+];
+
+var passwordValidator = [
+    function (val) {
+        return val.length >= 4;
+    },
+    "password should be at least 4 characters"
+];
+
 // Define our user schema
 var UserSchema = new mongoose.Schema({
     username: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        validate: usernameValidator
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        validator: passwordValidator
     }
 });
 
@@ -34,11 +50,11 @@ UserSchema.pre('save', function (callback) {
     });
 });
 
-UserSchema.methods.verifyPassword = function(password, cb) {
-  bcrypt.compare(password, this.password, function(err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
+UserSchema.methods.verifyPassword = function (password, cb) {
+    bcrypt.compare(password, this.password, function (err, isMatch) {
+        if (err) return cb(err);
+        cb(null, isMatch);
+    });
 };
 
 // Export the Mongoose model
