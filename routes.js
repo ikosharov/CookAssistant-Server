@@ -22,14 +22,14 @@ router.route('/recipes/personal')
     .post(authController.isAuthenticated, recipesController.postUserRecipe);
 
 router.route('/recipes/personal/:recipe_id')
-    .get(authController.isAuthenticated, recipesController.getPublicRecipes)
+    .get(authController.isAuthenticated, recipesController.getUserRecipe)
     .put(authController.isAuthenticated, recipesController.putUserRecipe)
     .delete(authController.isAuthenticated, recipesController.deleteUserRecipe);
 
 router.route('/recipes/public')
     .get(authController.isAuthenticated, recipesController.getPublicRecipes);
 
-router.route('recipes/public/:recipe_id')
+router.route('/recipes/public/:recipe_id')
     .get(authController.isAuthenticated, recipesController.getPublicRecipe);
 
 module.exports = router;

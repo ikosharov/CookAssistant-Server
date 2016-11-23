@@ -294,7 +294,7 @@ describe('Routes', function () {
                 });
         });
 
-        it('user should be able to get specific public recipes', function (done) {
+        it('user should be able to get specific public recipe', function (done) {
             request(url)
                 .post('/signin')
                 .send(sharedUser)
@@ -309,14 +309,13 @@ describe('Routes', function () {
                             }
 
                             assert.equal(200, res.status);
-                            assert(res.body.lenght == 1);
                             assert(res.body._id == publicRecipeOfOtherUser._id);
                             done();
                         });
                 });
         });
 
-        it('user should be able to get specific personal recipes', function (done) {
+        it('user should be able to get specific personal recipe', function (done) {
              request(url)
                 .post('/signin')
                 .send(sharedUser)
@@ -331,7 +330,6 @@ describe('Routes', function () {
                             }
 
                             assert.equal(200, res.status);
-                            assert(res.body.lenght == 1);
                             assert(res.body._id == privateRecipeOfSharedUser._id);
                             done();
                         });
