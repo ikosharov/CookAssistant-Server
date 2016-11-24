@@ -1,6 +1,7 @@
 var assert = require('assert');
 var request = require('supertest');
 var _ = require('lodash');
+var utils = require('./utils');
 
 describe('Routes', function () {
     var url = 'http://localhost:3000';
@@ -414,19 +415,35 @@ describe('Routes', function () {
         });
 
         it('user should not be able to delete personal recipe of another user', function (done) {
-            // generate some recipe
-            var recipe = {
-                title: "new recipe",
-                public: false,
-            }
-
-            // sign in the shared user
             request(url)
                 .post('/signin')
                 .send(sharedUser)
                 .end(function (err, res) {
                     request(url)
                         .del("/recipes/personal/" + privateRecipeOfOtherUser._id)
+                        .set('Authorization', `JWT ${res.body.token}`)
+                        .end(function (err, res) {
+                            if (err) {
+                                throw err;
+                            }
+                            assert(res.status == 401)
+                            done();
+                        });
+                });
+        });
+
+         it('user should not be able to update personal recipe of another user', function (done) {
+            var modifiedRecipe = utils.clone(privateRecipeOfOtherUser);
+            modifiedRecipe.title = "modified";
+            modifiedRecipe.public = true;
+            
+            request(url)
+                .post('/signin')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    request(url)
+                        .put("/recipes/personal/" + privateRecipeOfOtherUser._id)
+                        .send(modifiedRecipe)
                         .set('Authorization', `JWT ${res.body.token}`)
                         .end(function (err, res) {
                             if (err) {
