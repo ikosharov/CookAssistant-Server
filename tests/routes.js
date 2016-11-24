@@ -413,7 +413,29 @@ describe('Routes', function () {
                 });
         });
 
-        // user should not be able to delete recipe of another user
-        // user should not be able to update recipe of another user
+        it('user should not be able to delete personal recipe of another user', function (done) {
+            // generate some recipe
+            var recipe = {
+                title: "new recipe",
+                public: false,
+            }
+
+            // sign in the shared user
+            request(url)
+                .post('/signin')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    request(url)
+                        .del("/recipes/personal/" + privateRecipeOfOtherUser._id)
+                        .set('Authorization', `JWT ${res.body.token}`)
+                        .end(function (err, res) {
+                            if (err) {
+                                throw err;
+                            }
+                            assert(res.status == 401)
+                            done();
+                        });
+                });
+        });
     });
 });
