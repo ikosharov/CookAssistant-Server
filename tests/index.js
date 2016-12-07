@@ -413,6 +413,7 @@ describe('Routes', function () {
                             assert.ok(res.body._id);
                             assert.ok(res.body.title);
                             assert.ok(typeof (res.body.public) != 'undefined');
+                            done();
                         });
                 });
         });
