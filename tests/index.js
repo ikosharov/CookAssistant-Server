@@ -4,46 +4,18 @@ var _ = require('lodash');
 var utils = require('./utils');
 var path = require('path');
 
+var prerequisites = require('./prerequisites');
+
 describe('Routes', function () {
     var url = 'http://localhost:3000';
 
-    // function to generate random usernames
-    var generateRandomString = function () {
-        var randomNumStr = Math.random().toString();
-        return randomNumStr.substr(randomNumStr.indexOf(".") + 1);
-    }
-
-    // users that will be reused between tests
-    var sharedUser = {
-        username: "common" + generateRandomString(),
-        password: "commonPassword"
-    };
-
-    var otherUser = {
-        username: "other" + generateRandomString(),
-        password: "password"
-    };
-
-    // recipes that will be reused between tests
-    var privateRecipeOfSharedUser = {
-        title: "potatoes",
-        public: "false"
-    };
-
-    var publicRecipeOfSharedUser = {
-        title: "potatoes",
-        public: "true"
-    };
-
-    var privateRecipeOfOtherUser = {
-        title: "potatoes",
-        public: "false"
-    };
-
-    var publicRecipeOfOtherUser = {
-        title: "potatoes",
-        public: "true"
-    };
+    var generateRandomString = prerequisites.generateRandomString;
+    var sharedUser = prerequisites.sharedUser;
+    var otherUser = prerequisites.otherUser;
+    var privateRecipeOfSharedUser = prerequisites.privateRecipeOfSharedUser;
+    var publicRecipeOfSharedUser = prerequisites.publicRecipeOfSharedUser;
+    var privateRecipeOfOtherUser = prerequisites.privateRecipeOfOtherUser;
+    var publicRecipeOfOtherUser = prerequisites.publicRecipeOfOtherUser;
 
     before(function (done) {
         // create shared user and its recipes
