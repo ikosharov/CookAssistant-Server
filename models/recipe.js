@@ -12,6 +12,15 @@ var RecipeSchema = new mongoose.Schema({
   public: {
     type: Boolean,
     require: true
+  },
+  ingredients: {
+    type: Array
+  },
+  image: { 
+    data: Buffer
+  },
+  rating: {
+    type: Number
   }
 });
 

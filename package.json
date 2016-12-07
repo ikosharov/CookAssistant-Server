@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/index.js",
+    "test": "mocha tests/index.js --opts tests/mocha.opts",
     "test-debug": "mocha tests/index.js --debug-brk"
   },
   "repository": {

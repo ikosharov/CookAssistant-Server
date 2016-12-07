@@ -1,3 +1,5 @@
+var multiparty = require('multiparty');
+
 var Recipe = require('../models/recipe');
 
 exports.getPublicRecipes = function (req, res) {
@@ -37,16 +39,21 @@ exports.getUserRecipe = function (req, res) {
 };
 
 exports.postUserRecipe = function (req, res) {
-  var recipe = new Recipe();
-  recipe.title = req.body.title;
-  recipe.public = req.body.public;
-  recipe.userId = req.user._id;
+  var form = new multiparty.Form();
+  form.parse(req, function (err, fields, files) {
+    var recipe = new Recipe();
+    recipe.title = fields.title;
+    recipe.public = fields.public;
+    recipe.userId = req.user._id;
+    if(files.image) { recipe.image = files.image; }
 
-  recipe.save(function (err) {
-    if (err)
-      res.send(err);
-    else
-      res.json(recipe);
+    recipe.save(function (err) {
+      if (err)
+        res.send(err);
+      else
+        res.json(recipe);
+    });
+
   });
 };
 
@@ -67,10 +74,17 @@ exports.putUserRecipe = function (req, res) {
       return;
     }
 
-    recipe.title = req.body.title;
-    recipe.public = req.body.public;
-    recipe.save();
-    res.sendStatus(204);
+    var form = new multiparty.Form();
+    form.parse(req, function (err, fields, files) {
+      var recipe = new Recipe();
+      recipe.title = fields.title;
+      recipe.public = fields.public;
+      recipe.userId = req.user._id;
+      if(files.image) { recipe.image = files.image; }
+
+      recipe.save();
+      res.sendStatus(204);
+    });
   });
 };
 

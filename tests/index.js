@@ -2,6 +2,7 @@ var assert = require('assert');
 var request = require('supertest');
 var _ = require('lodash');
 var utils = require('./utils');
+var path = require('path');
 
 describe('Routes', function () {
     var url = 'http://localhost:3000';
@@ -56,7 +57,7 @@ describe('Routes', function () {
                     request(url)
                         .post("/recipes/personal")
                         .set('Authorization', 'JWT ' + token)
-                        .send(privateRecipeOfSharedUser)
+                        .field(privateRecipeOfSharedUser)
                         .end(function (err, res) {
                             if (err) reject();
                             privateRecipeOfSharedUser._id = res.body._id;
@@ -64,7 +65,7 @@ describe('Routes', function () {
                             request(url)
                                 .post("/recipes/personal")
                                 .set('Authorization', 'JWT ' + token)
-                                .send(publicRecipeOfSharedUser)
+                                .field(publicRecipeOfSharedUser)
                                 .end(function (err, res) {
                                     if (err) reject();
                                     publicRecipeOfSharedUser._id = res.body._id;
@@ -93,7 +94,7 @@ describe('Routes', function () {
                     request(url)
                         .post("/recipes/personal")
                         .set('Authorization', 'JWT ' + token)
-                        .send(privateRecipeOfOtherUser)
+                        .field(privateRecipeOfOtherUser)
                         .end(function (err, res) {
                             if (err) reject();
                             privateRecipeOfOtherUser._id = res.body._id;
@@ -101,7 +102,7 @@ describe('Routes', function () {
                             request(url)
                                 .post("/recipes/personal")
                                 .set('Authorization', 'JWT ' + token)
-                                .send(publicRecipeOfOtherUser)
+                                .field(publicRecipeOfOtherUser)
                                 .end(function (err, res) {
                                     if (err) reject();
                                     publicRecipeOfOtherUser._id = res.body._id;
@@ -341,7 +342,7 @@ describe('Routes', function () {
             // generate some recipe
             var recipe = {
                 title: "new recipe",
-                public: false,
+                public: "false",
             }
 
             // sign in the shared user
@@ -352,7 +353,7 @@ describe('Routes', function () {
                     var token = res.body.token;
                     request(url)
                         .post("/recipes/personal")
-                        .send(recipe)
+                        .field(recipe)
                         .set('Authorization', `JWT ${token}`)
                         .end(function (err, res) {
                             if (err) {
@@ -376,6 +377,42 @@ describe('Routes', function () {
                                     assert.equal(204, res.status);
                                     done();
                                 });
+                        });
+                });
+        });
+
+        it('user should be able to create recipes with images', function (done) {
+            // generate some recipe
+            var recipe = {
+                title: "new recipe",
+                public: "false",
+            }
+
+            // sign in the shared user
+            request(url)
+                .post('/signin')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    var token = res.body.token;
+
+                    var testsDir = path.resolve("tests");
+                    var testImagePath = path.join(testsDir, "test.png");
+                    console.log(testImagePath);
+
+                    request(url)
+                        .post("/recipes/personal")
+                        .field(recipe)
+                        .attach("image", testImagePath)
+                        .set('Authorization', `JWT ${token}`)
+                        .end(function (err, res) {
+                            if (err) {
+                                throw err;
+                            }
+
+                            assert.equal(200, res.status);
+                            assert.ok(res.body._id);
+                            assert.ok(res.body.title);
+                            assert.ok(typeof (res.body.public) != 'undefined');
                         });
                 });
         });
@@ -405,6 +442,7 @@ describe('Routes', function () {
                             // send the modified recipe back to the server
                             request(url)
                                 .put("/recipes/personal/" + recipe._id)
+                                .field(recipe)
                                 .set('Authorization', `JWT ${token}`)
                                 .end(function (err, res) {
                                     assert.equal(204, res.status);
@@ -432,18 +470,18 @@ describe('Routes', function () {
                 });
         });
 
-         it('user should not be able to update personal recipe of another user', function (done) {
+        it('user should not be able to update personal recipe of another user', function (done) {
             var modifiedRecipe = utils.clone(privateRecipeOfOtherUser);
             modifiedRecipe.title = "modified";
             modifiedRecipe.public = true;
-            
+
             request(url)
                 .post('/signin')
                 .send(sharedUser)
                 .end(function (err, res) {
                     request(url)
                         .put("/recipes/personal/" + privateRecipeOfOtherUser._id)
-                        .send(modifiedRecipe)
+                        .field(modifiedRecipe)
                         .set('Authorization', `JWT ${res.body.token}`)
                         .end(function (err, res) {
                             if (err) {
