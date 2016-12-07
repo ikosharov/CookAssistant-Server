@@ -397,7 +397,6 @@ describe('Routes', function () {
 
                     var testsDir = path.resolve("tests");
                     var testImagePath = path.join(testsDir, "test.png");
-                    console.log(testImagePath);
 
                     request(url)
                         .post("/recipes/personal")
