@@ -17,7 +17,8 @@ var RecipeSchema = new mongoose.Schema({
     type: Array
   },
   image: { 
-    data: Buffer
+    data: Buffer,
+    contentType: String
   },
   rating: {
     type: Number
