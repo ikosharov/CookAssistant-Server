@@ -412,6 +412,7 @@ describe('Routes', function () {
                             assert.equal(200, res.status);
                             assert.ok(res.body._id);
                             assert.ok(res.body.title);
+                            assert.ok(res.body.image);
                             assert.ok(typeof (res.body.public) != 'undefined');
                             done();
                         });
@@ -437,8 +438,12 @@ describe('Routes', function () {
                             });
 
                             // modify the recipe returned from the server
-                            var recipe = res.body[idx];
-                            recipe.title = "modified";
+                            var returnedRecipe = res.body[idx];
+                            var recipe = {
+                                _id: returnedRecipe._id,
+                                title: "modified",
+                                public: returnedRecipe.public.toString()
+                            }
 
                             // send the modified recipe back to the server
                             request(url)
@@ -474,7 +479,7 @@ describe('Routes', function () {
         it('user should not be able to update personal recipe of another user', function (done) {
             var modifiedRecipe = utils.clone(privateRecipeOfOtherUser);
             modifiedRecipe.title = "modified";
-            modifiedRecipe.public = true;
+            modifiedRecipe.public = "true";
 
             request(url)
                 .post('/signin')
