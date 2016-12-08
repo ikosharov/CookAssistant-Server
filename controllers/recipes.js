@@ -4,7 +4,7 @@ var fs = require('fs');
 var Recipe = require('../models/recipe');
 
 exports.getPublicRecipes = function (req, res) {
-    Recipe.find({ public: true }, function (err, recipes) {
+    Recipe.find({ isPublic: true }, function (err, recipes) {
         if (err)
             res.send(err);
         else
@@ -13,7 +13,7 @@ exports.getPublicRecipes = function (req, res) {
 };
 
 exports.getPublicRecipe = function (req, res) {
-    Recipe.findOne({ _id: req.params.recipe_id, public: true }, function (err, recipe) {
+    Recipe.findOne({ _id: req.params.recipe_id, isPublic: true }, function (err, recipe) {
         if (err)
             res.send(err);
         else
@@ -44,7 +44,7 @@ exports.postUserRecipe = function (req, res) {
     form.parse(req, function (err, fields, files) {
         var recipe = new Recipe();
         recipe.title = fields.title;
-        recipe.public = fields.public;
+        recipe.isPublic = fields.isPublic;
         recipe.userId = req.user._id;
         if (files.image) {
             recipe.image.data = fs.readFileSync(files.image[0].path);
@@ -82,7 +82,7 @@ exports.putUserRecipe = function (req, res) {
         form.parse(req, function (err, fields, files) {
             var recipe = new Recipe();
             recipe.title = fields.title;
-            recipe.public = fields.public;
+            recipe.isPublic = fields.isPublic;
             recipe.userId = req.user._id;
             if (files.image) {
                 recipe.image.data = fs.readFileSync(files.image[0].path);

@@ -18,22 +18,22 @@ var otherUser = {
 // recipes that will be reused between tests
 var privateRecipeOfSharedUser = {
     title: "potatoes",
-    public: "false"
+    isPublic: "false"
 };
 
 var publicRecipeOfSharedUser = {
     title: "potatoes",
-    public: "true"
+    isPublic: "true"
 };
 
 var privateRecipeOfOtherUser = {
     title: "potatoes",
-    public: "false"
+    isPublic: "false"
 };
 
 var publicRecipeOfOtherUser = {
     title: "potatoes",
-    public: "true"
+    isPublic: "true"
 };
 
 module.exports = {

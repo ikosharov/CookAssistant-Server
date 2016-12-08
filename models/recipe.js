@@ -9,7 +9,7 @@ var RecipeSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  public: {
+  isPublic: {
     type: Boolean,
     require: true
   },

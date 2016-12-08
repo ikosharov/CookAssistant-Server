@@ -234,7 +234,7 @@ describe('Routes', function () {
                             var recipes = res.body;
                             assert(recipes.length > 0);
                             recipes.forEach(function (recipe) {
-                                assert(recipe.public);
+                                assert(recipe.isPublic);
                             });
                             done();
                         });
@@ -314,7 +314,7 @@ describe('Routes', function () {
             // generate some recipe
             var recipe = {
                 title: "new recipe",
-                public: "false",
+                isPublic: "false",
             }
 
             // sign in the shared user
@@ -335,7 +335,7 @@ describe('Routes', function () {
                             assert.equal(200, res.status);
                             assert.ok(res.body._id);
                             assert.ok(res.body.title);
-                            assert.ok(typeof (res.body.public) != 'undefined');
+                            assert.ok(typeof (res.body.isPublic) != 'undefined');
 
                             // delete the recipe we just created
                             request(url)
@@ -357,7 +357,7 @@ describe('Routes', function () {
             // generate some recipe
             var recipe = {
                 title: "new recipe",
-                public: "false",
+                isPublic: "false",
             }
 
             // sign in the shared user
@@ -384,7 +384,7 @@ describe('Routes', function () {
                             assert.ok(res.body._id);
                             assert.ok(res.body.title);
                             assert.ok(res.body.image);
-                            assert.ok(typeof (res.body.public) != 'undefined');
+                            assert.ok(typeof (res.body.isPublic) != 'undefined');
                             done();
                         });
                 });
@@ -413,7 +413,7 @@ describe('Routes', function () {
                             var recipe = {
                                 _id: returnedRecipe._id,
                                 title: "modified",
-                                public: returnedRecipe.public.toString()
+                                isPublic: returnedRecipe.isPublic.toString()
                             }
 
                             // send the modified recipe back to the server
@@ -450,7 +450,7 @@ describe('Routes', function () {
         it('user should not be able to update personal recipe of another user', function (done) {
             var modifiedRecipe = utils.clone(privateRecipeOfOtherUser);
             modifiedRecipe.title = "modified";
-            modifiedRecipe.public = "true";
+            modifiedRecipe.isPublic = "true";
 
             request(url)
                 .post('/signin')
