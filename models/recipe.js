@@ -11,7 +11,7 @@ var RecipeSchema = new mongoose.Schema({
   },
   isPublic: {
     type: Boolean,
-    require: true
+    required: true
   },
   ingredients: {
     type: Array

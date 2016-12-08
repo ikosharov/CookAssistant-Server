@@ -43,8 +43,8 @@ exports.postUserRecipe = function (req, res) {
     var form = new multiparty.Form();
     form.parse(req, function (err, fields, files) {
         var recipe = new Recipe();
-        recipe.title = fields.title;
-        recipe.isPublic = fields.isPublic;
+        recipe.title = fields.title[0];
+        recipe.isPublic = fields.isPublic[0];
         recipe.userId = req.user._id;
         if (files.image) {
             recipe.image.data = fs.readFileSync(files.image[0].path);
@@ -81,8 +81,8 @@ exports.putUserRecipe = function (req, res) {
         var form = new multiparty.Form();
         form.parse(req, function (err, fields, files) {
             var recipe = new Recipe();
-            recipe.title = fields.title;
-            recipe.isPublic = fields.isPublic;
+            recipe.title = fields.title[0];
+            recipe.isPublic = fields.isPublic[0];
             recipe.userId = req.user._id;
             if (files.image) {
                 recipe.image.data = fs.readFileSync(files.image[0].path);
