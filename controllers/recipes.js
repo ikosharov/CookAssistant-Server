@@ -3,12 +3,31 @@ var fs = require('fs');
 
 var Recipe = require('../models/recipe');
 
+var prepareForTransmit = function (dbEntry) {
+    var recipe = {};
+    recipe._id = dbEntry._id.toString();
+    recipe.userId = dbEntry.userId.toString();
+    recipe.title = dbEntry.title;
+    recipe.isPublic = dbEntry.isPublic;
+    recipe.ingredients = dbEntry.ingredients || [];
+
+    if (dbEntry.image && dbEntry.image.data) {
+        recipe.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
+    }
+    return recipe;
+}
+
 exports.getPublicRecipes = function (req, res) {
     Recipe.find({ isPublic: true }, function (err, recipes) {
         if (err)
             res.send(err);
-        else
-            res.json(recipes);
+        else {
+            var response = [];
+            recipes.forEach(function (recipe) {
+                response.push(prepareForTransmit(recipe));
+            });
+            res.json(response);
+        }
     });
 };
 
@@ -17,7 +36,7 @@ exports.getPublicRecipe = function (req, res) {
         if (err)
             res.send(err);
         else
-            res.json(recipe);
+            res.json(prepareForTransmit(recipe));
     });
 };
 
@@ -25,8 +44,13 @@ exports.getUserRecipes = function (req, res) {
     Recipe.find({ userId: req.user._id }, function (err, recipes) {
         if (err)
             res.send(err);
-        else
-            res.json(recipes);
+        else {
+            var response = [];
+            recipes.forEach(function (recipe) {
+                response.push(prepareForTransmit(recipe));
+            });
+            res.json(response);
+        }
     });
 };
 
@@ -35,7 +59,7 @@ exports.getUserRecipe = function (req, res) {
         if (err)
             res.send(err);
         else
-            res.json(recipe);
+            res.json(prepareForTransmit(recipe));
     });
 };
 
@@ -55,7 +79,7 @@ exports.postUserRecipe = function (req, res) {
             if (err)
                 res.send(err);
             else
-                res.json(recipe);
+                res.json(prepareForTransmit(recipe));
         });
 
     });
