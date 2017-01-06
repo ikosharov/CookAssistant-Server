@@ -10,11 +10,31 @@ var prepareForTransmit = function (dbEntry) {
     recipe.title = dbEntry.title;
     recipe.isPublic = dbEntry.isPublic;
     recipe.ingredients = dbEntry.ingredients || [];
+    recipe.rating = dbEntry.rating;
 
     if (dbEntry.image && dbEntry.image.data) {
         recipe.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
     }
     return recipe;
+}
+
+var extractFromRequest = function (req, callback) {
+    var form = new multiparty.Form();
+    form.parse(req, function (err, fields, files) {
+        var recipe = new Recipe();
+        recipe.title = fields.title[0];
+        recipe.isPublic = fields.isPublic[0];
+        if (fields.rating && field.rating[0]) {
+            recipe.rating = fields.rating[0];
+        }
+        recipe.userId = req.user._id;
+        if (files.image) {
+            recipe.image.data = fs.readFileSync(files.image[0].path);
+            recipe.image.contentType = 'image/png';
+        }
+
+        callback(recipe);
+    });
 }
 
 exports.getPublicRecipes = function (req, res) {
@@ -64,24 +84,13 @@ exports.getUserRecipe = function (req, res) {
 };
 
 exports.postUserRecipe = function (req, res) {
-    var form = new multiparty.Form();
-    form.parse(req, function (err, fields, files) {
-        var recipe = new Recipe();
-        recipe.title = fields.title[0];
-        recipe.isPublic = fields.isPublic[0];
-        recipe.userId = req.user._id;
-        if (files.image) {
-            recipe.image.data = fs.readFileSync(files.image[0].path);
-            recipe.image.contentType = 'image/png';
-        }
-
+    extractFromRequest(req, function (recipe) {
         recipe.save(function (err) {
             if (err)
                 res.send(err);
             else
                 res.json(prepareForTransmit(recipe));
         });
-
     });
 };
 
@@ -102,17 +111,7 @@ exports.putUserRecipe = function (req, res) {
             return;
         }
 
-        var form = new multiparty.Form();
-        form.parse(req, function (err, fields, files) {
-            var recipe = new Recipe();
-            recipe.title = fields.title[0];
-            recipe.isPublic = fields.isPublic[0];
-            recipe.userId = req.user._id;
-            if (files.image) {
-                recipe.image.data = fs.readFileSync(files.image[0].path);
-                recipe.image.contentType = 'image/png';
-            }
-
+        extractFromRequest(req, function (recipe) {
             recipe.save();
             res.sendStatus(204);
         });
