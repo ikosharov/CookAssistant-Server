@@ -24,7 +24,7 @@ var extractFromRequest = function (req, callback) {
         var recipe = new Recipe();
         recipe.title = fields.title[0];
         recipe.isPublic = fields.isPublic[0];
-        if (fields.rating && field.rating[0]) {
+        if (fields.rating && fields.rating[0]) {
             recipe.rating = fields.rating[0];
         }
         recipe.userId = req.user._id;
