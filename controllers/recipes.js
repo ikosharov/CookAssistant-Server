@@ -23,7 +23,9 @@ var extractFromRequest = function (req, callback) {
     form.parse(req, function (err, fields, files) {
         var recipe = new Recipe();
         recipe.title = fields.title[0];
-        recipe.isPublic = fields.isPublic[0];
+        if (fields.isPublic) {
+            recipe.isPublic = fields.isPublic[0];
+        }
         if (fields.rating && fields.rating[0]) {
             recipe.rating = fields.rating[0];
         }
