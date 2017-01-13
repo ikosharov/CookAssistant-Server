@@ -18,18 +18,21 @@ var prepareForTransmit = function (dbEntry) {
     return recipe;
 }
 
-var extractFromRequest = function (req, callback) {
+var extractFromRequest = function (req, dbEntry, callback) {
     var form = new multiparty.Form();
     form.parse(req, function (err, fields, files) {
-        var recipe = new Recipe();
-        recipe.title = fields.title[0];
+        var recipe = (dbEntry != null) ? dbEntry : new Recipe();
+        recipe.userId = req.user._id;
+
+        if (fields.title && fields.title[0]) {
+            recipe.title = fields.title[0];
+        }
         if (fields.isPublic) {
             recipe.isPublic = fields.isPublic[0];
         }
         if (fields.rating && fields.rating[0]) {
             recipe.rating = fields.rating[0];
         }
-        recipe.userId = req.user._id;
         if (files.image) {
             recipe.image.data = fs.readFileSync(files.image[0].path);
             recipe.image.contentType = 'image/png';
@@ -86,7 +89,7 @@ exports.getUserRecipe = function (req, res) {
 };
 
 exports.postUserRecipe = function (req, res) {
-    extractFromRequest(req, function (recipe) {
+    extractFromRequest(req, null, function (recipe) {
         recipe.save(function (err) {
             if (err)
                 res.send(err);
@@ -97,23 +100,23 @@ exports.postUserRecipe = function (req, res) {
 };
 
 exports.putUserRecipe = function (req, res) {
-    Recipe.findOne({ _id: req.params.recipe_id }, function (err, recipe) {
+    Recipe.findOne({ _id: req.params.recipe_id }, function (err, dbEntry) {
         if (err) {
             res.send(err);
             return;
         }
 
-        if (!recipe) {
+        if (!dbEntry) {
             res.sendStatus(404);
             return;
         }
 
-        if (recipe.userId != req.user._id) {
+        if (dbEntry.userId != req.user._id) {
             res.sendStatus(401);
             return;
         }
 
-        extractFromRequest(req, function (recipe) {
+        extractFromRequest(req, dbEntry, function (recipe) {
             recipe.save();
             res.sendStatus(204);
         });
