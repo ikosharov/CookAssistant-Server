@@ -50,7 +50,8 @@ exports.getRecipes = function (req, res) {
     if (req.query.user == 'current') {
         filter.userId = req.user._id;
     }
-    if (req.query.visibility != 'public' && req.query.user != 'current') {
+    if (req.query.visibility != 'public' && typeof req.query.visibility != 'undefined' && 
+        req.query.user != 'current' && typeof req.query.user != 'undefined') {
         // not allowed to request non-public recipes of other users
         res.sendStatus(401);
         return;
