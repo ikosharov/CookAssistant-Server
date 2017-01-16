@@ -27,7 +27,7 @@ describe('Routes', function () {
                     if (err) reject();
                     var token = res.body.token;
                     request(url)
-                        .post("/recipes/personal")
+                        .post("/recipes")
                         .set('Authorization', 'JWT ' + token)
                         .field(privateRecipeOfSharedUser)
                         .end(function (err, res) {
@@ -35,7 +35,7 @@ describe('Routes', function () {
                             privateRecipeOfSharedUser._id = res.body._id;
 
                             request(url)
-                                .post("/recipes/personal")
+                                .post("/recipes")
                                 .set('Authorization', 'JWT ' + token)
                                 .field(publicRecipeOfSharedUser)
                                 .end(function (err, res) {
@@ -43,7 +43,7 @@ describe('Routes', function () {
                                     publicRecipeOfSharedUser._id = res.body._id;
 
                                     request(url)
-                                        .get('/currentUser')
+                                        .get('/userInfo')
                                         .set('Authorization', 'JWT ' + token)
                                         .end(function (err, res) {
                                             if (err) reject();
@@ -64,7 +64,7 @@ describe('Routes', function () {
                     if (err) reject();
                     var token = res.body.token;
                     request(url)
-                        .post("/recipes/personal")
+                        .post("/recipes")
                         .set('Authorization', 'JWT ' + token)
                         .field(privateRecipeOfOtherUser)
                         .end(function (err, res) {
@@ -72,7 +72,7 @@ describe('Routes', function () {
                             privateRecipeOfOtherUser._id = res.body._id;
 
                             request(url)
-                                .post("/recipes/personal")
+                                .post("/recipes")
                                 .set('Authorization', 'JWT ' + token)
                                 .field(publicRecipeOfOtherUser)
                                 .end(function (err, res) {
@@ -80,7 +80,7 @@ describe('Routes', function () {
                                     publicRecipeOfOtherUser._id = res.body._id;
 
                                     request(url)
-                                        .get('/currentUser')
+                                        .get('/userInfo')
                                         .set('Authorization', 'JWT ' + token)
                                         .end(function (err, res) {
                                             if (err) reject();
@@ -220,7 +220,7 @@ describe('Routes', function () {
                 .send(sharedUser)
                 .end(function (err, res) {
                     request(url)
-                        .get("/recipes/public")
+                        .get("/recipes?visibility=public")
                         .set('Authorization', `JWT ${res.body.token}`)
                         .expect('Content-Type', /json/)
                         .end(function (err, res) {
@@ -247,7 +247,7 @@ describe('Routes', function () {
                 .send(sharedUser)
                 .end(function (err, res) {
                     request(url)
-                        .get("/recipes/personal")
+                        .get("/recipes?visibility=personal&user=current")
                         .set('Authorization', `JWT ${res.body.token}`)
                         .expect('Content-Type', /json/)
                         .end(function (err, res) {
@@ -274,7 +274,7 @@ describe('Routes', function () {
                 .send(sharedUser)
                 .end(function (err, res) {
                     request(url)
-                        .get("/recipes/public/" + publicRecipeOfOtherUser._id)
+                        .get("/recipes/" + publicRecipeOfOtherUser._id)
                         .set('Authorization', `JWT ${res.body.token}`)
                         .expect('Content-Type', /json/)
                         .end(function (err, res) {
@@ -295,7 +295,7 @@ describe('Routes', function () {
                 .send(sharedUser)
                 .end(function (err, res) {
                     request(url)
-                        .get("/recipes/personal/" + privateRecipeOfSharedUser._id)
+                        .get("/recipes/" + privateRecipeOfSharedUser._id)
                         .set('Authorization', `JWT ${res.body.token}`)
                         .expect('Content-Type', /json/)
                         .end(function (err, res) {
@@ -324,7 +324,7 @@ describe('Routes', function () {
                 .end(function (err, res) {
                     var token = res.body.token;
                     request(url)
-                        .post("/recipes/personal")
+                        .post("/recipes")
                         .field(recipe)
                         .set('Authorization', `JWT ${token}`)
                         .end(function (err, res) {
@@ -339,7 +339,7 @@ describe('Routes', function () {
 
                             // delete the recipe we just created
                             request(url)
-                                .del("/recipes/personal/" + res.body._id)
+                                .del("/recipes/" + res.body._id)
                                 .set('Authorization', `JWT ${token}`)
                                 .end(function (err, res) {
                                     if (err) {
@@ -371,7 +371,7 @@ describe('Routes', function () {
                     var testImagePath = path.join(testsDir, "test.png");
 
                     request(url)
-                        .post("/recipes/personal")
+                        .post("/recipes")
                         .field(recipe)
                         .attach("image", testImagePath)
                         .set('Authorization', `JWT ${token}`)
@@ -399,7 +399,7 @@ describe('Routes', function () {
 
                     // get all recipes
                     request(url)
-                        .get("/recipes/personal")
+                        .get("/recipes?user=current")
                         .set('Authorization', `JWT ${token}`)
                         .end(function (err, res) {
 
@@ -418,7 +418,7 @@ describe('Routes', function () {
 
                             // send the modified recipe back to the server
                             request(url)
-                                .put("/recipes/personal/" + recipe._id)
+                                .put("/recipes/" + recipe._id)
                                 .field(recipe)
                                 .set('Authorization', `JWT ${token}`)
                                 .end(function (err, res) {
@@ -435,7 +435,7 @@ describe('Routes', function () {
                 .send(sharedUser)
                 .end(function (err, res) {
                     request(url)
-                        .del("/recipes/personal/" + privateRecipeOfOtherUser._id)
+                        .del("/recipes/" + privateRecipeOfOtherUser._id)
                         .set('Authorization', `JWT ${res.body.token}`)
                         .end(function (err, res) {
                             if (err) {
@@ -457,7 +457,7 @@ describe('Routes', function () {
                 .send(sharedUser)
                 .end(function (err, res) {
                     request(url)
-                        .put("/recipes/personal/" + privateRecipeOfOtherUser._id)
+                        .put("/recipes/" + privateRecipeOfOtherUser._id)
                         .field(modifiedRecipe)
                         .set('Authorization', `JWT ${res.body.token}`)
                         .end(function (err, res) {

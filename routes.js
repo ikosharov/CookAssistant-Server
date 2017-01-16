@@ -14,22 +14,16 @@ router.route('/signup')
 router.route('/signin')
     .post(usersController.signIn);
 
-router.route('/currentUser')
-    .get(authController.isAuthenticated, usersController.currentUser);
+router.route('/userInfo')
+    .get(authController.isAuthenticated, usersController.userInfo);
 
-router.route('/recipes/personal')
-    .get(authController.isAuthenticated, recipesController.getUserRecipes)
-    .post(authController.isAuthenticated, recipesController.postUserRecipe);
+router.route('/recipes')
+    .get(authController.isAuthenticated, recipesController.getRecipes)
+    .post(authController.isAuthenticated, recipesController.postRecipe);
 
-router.route('/recipes/personal/:recipe_id')
-    .get(authController.isAuthenticated, recipesController.getUserRecipe)
-    .put(authController.isAuthenticated, recipesController.putUserRecipe)
-    .delete(authController.isAuthenticated, recipesController.deleteUserRecipe);
-
-router.route('/recipes/public')
-    .get(authController.isAuthenticated, recipesController.getPublicRecipes);
-
-router.route('/recipes/public/:recipe_id')
-    .get(authController.isAuthenticated, recipesController.getPublicRecipe);
+router.route('/recipes/:recipe_id')
+    .get(authController.isAuthenticated, recipesController.getRecipe)
+    .put(authController.isAuthenticated, recipesController.putRecipe)
+    .delete(authController.isAuthenticated, recipesController.deleteRecipe);
 
 module.exports = router;

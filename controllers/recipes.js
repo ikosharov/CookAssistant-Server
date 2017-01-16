@@ -42,8 +42,21 @@ var extractFromRequest = function (req, dbEntry, callback) {
     });
 }
 
-exports.getPublicRecipes = function (req, res) {
-    Recipe.find({ isPublic: true }, function (err, recipes) {
+exports.getRecipes = function (req, res) {
+    var filter = {};
+    if (req.query.visibility) {
+        filter.isPublic = req.query.visibility == 'public';
+    }
+    if (req.query.user == 'current') {
+        filter.userId = req.user._id;
+    }
+    if (req.query.visibility != 'public' && req.query.user != 'current') {
+        // not allowed to request non-public recipes of other users
+        res.sendStatus(401);
+        return;
+    }
+
+    Recipe.find(filter, function (err, recipes) {
         if (err)
             res.send(err);
         else {
@@ -56,39 +69,23 @@ exports.getPublicRecipes = function (req, res) {
     });
 };
 
-exports.getPublicRecipe = function (req, res) {
-    Recipe.findOne({ _id: req.params.recipe_id, isPublic: true }, function (err, recipe) {
-        if (err)
+exports.getRecipe = function (req, res) {
+    Recipe.findOne({ _id: req.params.recipe_id }, function (err, recipe) {
+        if (err) {
             res.send(err);
-        else
+        } else {
+            
+            if (!recipe.isPublic && recipe.userId != req.user._id) {
+                // not allowed to request non-public recipes of other users
+                res.sendStatus(401);
+                return;
+            }
             res.json(prepareForTransmit(recipe));
-    });
-};
-
-exports.getUserRecipes = function (req, res) {
-    Recipe.find({ userId: req.user._id }, function (err, recipes) {
-        if (err)
-            res.send(err);
-        else {
-            var response = [];
-            recipes.forEach(function (recipe) {
-                response.push(prepareForTransmit(recipe));
-            });
-            res.json(response);
         }
     });
 };
 
-exports.getUserRecipe = function (req, res) {
-    Recipe.findOne({ userId: req.user._id, _id: req.params.recipe_id }, function (err, recipe) {
-        if (err)
-            res.send(err);
-        else
-            res.json(prepareForTransmit(recipe));
-    });
-};
-
-exports.postUserRecipe = function (req, res) {
+exports.postRecipe = function (req, res) {
     extractFromRequest(req, null, function (recipe) {
         recipe.save(function (err) {
             if (err)
@@ -99,7 +96,7 @@ exports.postUserRecipe = function (req, res) {
     });
 };
 
-exports.putUserRecipe = function (req, res) {
+exports.putRecipe = function (req, res) {
     Recipe.findOne({ _id: req.params.recipe_id }, function (err, dbEntry) {
         if (err) {
             res.send(err);
@@ -123,7 +120,7 @@ exports.putUserRecipe = function (req, res) {
     });
 };
 
-exports.deleteUserRecipe = function (req, res) {
+exports.deleteRecipe = function (req, res) {
     Recipe.findOne({ _id: req.params.recipe_id }, function (err, recipe) {
         if (err) {
             res.send(err);

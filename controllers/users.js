@@ -45,7 +45,7 @@ exports.signIn = function (req, res) {
   });
 }
 
-exports.currentUser = function (req, res) {
+exports.userInfo = function (req, res) {
   User.findOne({ _id: req.user._id }, function (err, user) {
     if (err)
       res.send(err);
