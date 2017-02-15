@@ -40,18 +40,26 @@ var extractRecipeFromRequest = function (req, dbEntry, callback) {
         var recipe = (dbEntry != null) ? dbEntry : new Recipe();
         recipe.userId = req.user._id;
 
-        if (fields.title && fields.title[0]) {
-            recipe.title = fields.title[0];
+        var recipeFromRequest = JSON.parse(fields.recipe);
+
+        if (typeof recipeFromRequest.title != 'undefined') {
+            recipe.title = recipeFromRequest.title;
         }
-        if (fields.isPublic) {
-            recipe.isPublic = fields.isPublic[0];
+        if (typeof recipeFromRequest.isPublic != 'undefined') {
+            recipe.isPublic = recipeFromRequest.isPublic;
         }
-        if (fields.rating && fields.rating[0]) {
-            recipe.rating = fields.rating[0];
+        if (typeof recipeFromRequest.rating != 'undefined') {
+            recipe.rating = recipeFromRequest.rating;
         }
-        if (files.image) {
+        if (typeof files.image != 'undefined') {
             recipe.image.data = fs.readFileSync(files.image[0].path);
             recipe.image.contentType = 'image/png';
+        }
+        if(typeof recipeFromRequest.ingredients != 'undefined') {
+            recipe.ingredients = recipeFromRequest.ingredients;
+        }
+        if(typeof recipeFromRequest.steps != 'undefined') {
+            recipe.steps = recipeFromRequest.steps;
         }
 
         callback(recipe);

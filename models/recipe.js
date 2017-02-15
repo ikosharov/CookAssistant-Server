@@ -23,6 +23,9 @@ var RecipeSchema = new mongoose.Schema({
   ingredients: {
     type: Array
   },
+  steps: {
+    type: Array
+  },
   image: { 
     data: Buffer,
     contentType: String

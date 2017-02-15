@@ -7,33 +7,45 @@ var generateRandomString = function () {
 // users that will be reused between tests
 var sharedUser = {
     username: "common" + generateRandomString(),
-    password: "commonPassword"
+    password: "1234"
 };
 
 var otherUser = {
     username: "other" + generateRandomString(),
-    password: "password"
+    password: "1234"
 };
 
 // recipes that will be reused between tests
 var privateRecipeOfSharedUser = {
-    title: "potatoes",
-    isPublic: "false"
+    title: "my private recipe",
+    isPublic: false,
+    rating: 5,
+    ingredients: ["potatoes", "salt", "butter"],
+    steps: ["step 1", "step 2", "step 3"]
 };
 
 var publicRecipeOfSharedUser = {
-    title: "potatoes",
-    isPublic: "true"
+    title: "my public recipe",
+    isPublic: true,
+    rating: 2,
+    ingredients: ["potatoes", "salt", "butter"],
+    steps: ["step 1", "step 2", "step 3"]
 };
 
 var privateRecipeOfOtherUser = {
-    title: "potatoes",
-    isPublic: "false"
+    title: "others private recipe",
+    isPublic: false,
+    rating: 5,
+    ingredients: ["potatoes", "salt", "butter"],
+    steps: ["step 1", "step 2", "step 3"]
 };
 
 var publicRecipeOfOtherUser = {
-    title: "potatoes",
-    isPublic: "true"
+    title: "others public recipe",
+    isPublic: true,
+    ratign: 2,
+    ingredients: ["potatoes", "salt", "butter"],
+    steps: ["step 1", "step 2", "step 3"]
 };
 
 module.exports = {
