@@ -10,8 +10,10 @@ var prepareRecipeDetailsForTransmit = function (dbEntry) {
     recipe.userId = dbEntry.userId.toString();
     recipe.title = dbEntry.title;
     recipe.isPublic = dbEntry.isPublic;
-    recipe.ingredients = dbEntry.ingredients || [];
     recipe.rating = dbEntry.rating;
+    
+    recipe.ingredients = dbEntry.ingredients || [];
+    recipe.steps = dbEntry.steps || [];
 
     if (dbEntry.image && dbEntry.image.data) {
         recipe.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
