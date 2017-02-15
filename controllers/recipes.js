@@ -3,7 +3,8 @@ var fs = require('fs');
 
 var Recipe = require('../models/recipe');
 
-var prepareForTransmit = function (dbEntry) {
+// all details
+var prepareRecipeDetailsForTransmit = function (dbEntry) {
     var recipe = {};
     recipe._id = dbEntry._id.toString();
     recipe.userId = dbEntry.userId.toString();
@@ -18,7 +19,22 @@ var prepareForTransmit = function (dbEntry) {
     return recipe;
 }
 
-var extractFromRequest = function (req, dbEntry, callback) {
+// no ingredients, steps to prepare and their images
+var prepareRecipeSummaryForTransmit = function (dbEntry) {
+    var recipe = {};
+    recipe._id = dbEntry._id.toString();
+    recipe.userId = dbEntry.userId.toString();
+    recipe.title = dbEntry.title;
+    recipe.isPublic = dbEntry.isPublic;
+    recipe.rating = dbEntry.rating;
+
+    if (dbEntry.image && dbEntry.image.data) {
+        recipe.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
+    }
+    return recipe;
+}
+
+var extractRecipeFromRequest = function (req, dbEntry, callback) {
     var form = new multiparty.Form();
     form.parse(req, function (err, fields, files) {
         var recipe = (dbEntry != null) ? dbEntry : new Recipe();
@@ -63,7 +79,7 @@ exports.getRecipes = function (req, res) {
         else {
             var response = [];
             recipes.forEach(function (recipe) {
-                response.push(prepareForTransmit(recipe));
+                response.push(prepareRecipeSummaryForTransmit(recipe));
             });
             res.json(response);
         }
@@ -81,18 +97,18 @@ exports.getRecipe = function (req, res) {
                 res.sendStatus(401);
                 return;
             }
-            res.json(prepareForTransmit(recipe));
+            res.json(prepareRecipeDetailsForTransmit(recipe));
         }
     });
 };
 
 exports.postRecipe = function (req, res) {
-    extractFromRequest(req, null, function (recipe) {
+    extractRecipeFromRequest(req, null, function (recipe) {
         recipe.save(function (err) {
             if (err)
                 res.send(err);
             else
-                res.json(prepareForTransmit(recipe));
+                res.json(prepareRecipeDetailsForTransmit(recipe));
         });
     });
 };
@@ -114,7 +130,7 @@ exports.putRecipe = function (req, res) {
             return;
         }
 
-        extractFromRequest(req, dbEntry, function (recipe) {
+        extractRecipeFromRequest(req, dbEntry, function (recipe) {
             recipe.save();
             res.sendStatus(204);
         });
