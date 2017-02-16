@@ -20,32 +20,64 @@ var privateRecipeOfSharedUser = {
     title: "my private recipe",
     isPublic: false,
     rating: 5,
-    ingredients: ["potatoes", "salt", "butter"],
-    steps: ["step 1", "step 2", "step 3"]
+    ingredients: [
+        { title: "potatoes" }, 
+        { title: "salt" },
+        { title: "butter" }
+    ],
+    steps: [
+        { title: 'step 1' },
+        { title: 'step 2' },
+        { title: 'step 3' }
+    ]
 };
 
 var publicRecipeOfSharedUser = {
     title: "my public recipe",
     isPublic: true,
     rating: 2,
-    ingredients: ["potatoes", "salt", "butter"],
-    steps: ["step 1", "step 2", "step 3"]
+     ingredients: [
+        { title: "potatoes" }, 
+        { title: "salt" },
+        { title: "butter" }
+    ],
+    steps: [
+        { title: 'step 1' },
+        { title: 'step 2' },
+        { title: 'step 3' }
+    ]
 };
 
 var privateRecipeOfOtherUser = {
     title: "others private recipe",
     isPublic: false,
     rating: 5,
-    ingredients: ["potatoes", "salt", "butter"],
-    steps: ["step 1", "step 2", "step 3"]
+     ingredients: [
+        { title: "potatoes" }, 
+        { title: "salt" },
+        { title: "butter" }
+    ],
+    steps: [
+        { title: 'step 1' },
+        { title: 'step 2' },
+        { title: 'step 3' }
+    ]
 };
 
 var publicRecipeOfOtherUser = {
     title: "others public recipe",
     isPublic: true,
     ratign: 2,
-    ingredients: ["potatoes", "salt", "butter"],
-    steps: ["step 1", "step 2", "step 3"]
+     ingredients: [
+        { title: "potatoes" }, 
+        { title: "salt" },
+        { title: "butter" }
+    ],
+    steps: [
+        { title: 'step 1' },
+        { title: 'step 2' },
+        { title: 'step 3' }
+    ]
 };
 
 module.exports = {

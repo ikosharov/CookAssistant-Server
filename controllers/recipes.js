@@ -2,6 +2,8 @@ var multiparty = require('multiparty');
 var fs = require('fs');
 
 var Recipe = require('../models/recipe');
+var Ingredient = require('../models/ingredient');
+var Step = require('../models/step');
 
 // all details
 var prepareRecipeDetailsForTransmit = function (dbEntry) {
@@ -58,10 +60,16 @@ var extractRecipeFromRequest = function (req, dbEntry, callback) {
             recipe.image.contentType = 'image/png';
         }
         if(typeof recipeFromRequest.ingredients != 'undefined') {
-            recipe.ingredients = recipeFromRequest.ingredients;
+            recipe.ingredients = [];
+            for(idx in recipeFromRequest.ingredients) {
+                recipe.ingredients.push(recipeFromRequest.ingredients[idx]);
+            }
         }
         if(typeof recipeFromRequest.steps != 'undefined') {
-            recipe.steps = recipeFromRequest.steps;
+            recipe.steps = [];
+            for(idx in recipeFromRequest.steps) {
+                recipe.steps.push(recipeFromRequest.steps[idx]);
+            }
         }
 
         callback(recipe);
