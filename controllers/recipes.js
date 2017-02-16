@@ -7,35 +7,35 @@ var Step = require('../models/step');
 
 // all details
 var prepareRecipeDetailsForTransmit = function (dbEntry) {
-    var recipe = {};
-    recipe._id = dbEntry._id.toString();
-    recipe.userId = dbEntry.userId.toString();
-    recipe.title = dbEntry.title;
-    recipe.isPublic = dbEntry.isPublic;
-    recipe.rating = dbEntry.rating;
+    var dataToTransmit = {};
+    dataToTransmit._id = dbEntry._id.toString();
+    dataToTransmit.userId = dbEntry.userId.toString();
+    dataToTransmit.title = dbEntry.title;
+    dataToTransmit.isPublic = dbEntry.isPublic;
+    dataToTransmit.rating = dbEntry.rating;
     
-    recipe.ingredients = dbEntry.ingredients || [];
-    recipe.steps = dbEntry.steps || [];
+    dataToTransmit.ingredients = dbEntry.ingredients || [];
+    dataToTransmit.steps = dbEntry.steps || [];
 
     if (dbEntry.image && dbEntry.image.data) {
-        recipe.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
+        dataToTransmit.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
     }
-    return recipe;
+    return dataToTransmit;
 }
 
 // no ingredients, steps to prepare and their images
 var prepareRecipeSummaryForTransmit = function (dbEntry) {
-    var recipe = {};
-    recipe._id = dbEntry._id.toString();
-    recipe.userId = dbEntry.userId.toString();
-    recipe.title = dbEntry.title;
-    recipe.isPublic = dbEntry.isPublic;
-    recipe.rating = dbEntry.rating;
+    var dataToTransmit = {};
+    dataToTransmit._id = dbEntry._id.toString();
+    dataToTransmit.userId = dbEntry.userId.toString();
+    dataToTransmit.title = dbEntry.title;
+    dataToTransmit.isPublic = dbEntry.isPublic;
+    dataToTransmit.rating = dbEntry.rating;
 
     if (dbEntry.image && dbEntry.image.data) {
-        recipe.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
+        dataToTransmit.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
     }
-    return recipe;
+    return dataToTransmit;
 }
 
 var extractRecipeFromRequest = function (req, dbEntry, callback) {
@@ -44,7 +44,7 @@ var extractRecipeFromRequest = function (req, dbEntry, callback) {
         var recipe = (dbEntry != null) ? dbEntry : new Recipe();
         recipe.userId = req.user._id;
 
-        var recipeFromRequest = JSON.parse(fields.recipe);
+        var recipeFromRequest = JSON.parse(fields.data);
 
         if (typeof recipeFromRequest.title != 'undefined') {
             recipe.title = recipeFromRequest.title;
@@ -59,18 +59,18 @@ var extractRecipeFromRequest = function (req, dbEntry, callback) {
             recipe.image.data = fs.readFileSync(files.image[0].path);
             recipe.image.contentType = 'image/png';
         }
-        if(typeof recipeFromRequest.ingredients != 'undefined') {
-            recipe.ingredients = [];
-            for(idx in recipeFromRequest.ingredients) {
-                recipe.ingredients.push(recipeFromRequest.ingredients[idx]);
-            }
-        }
-        if(typeof recipeFromRequest.steps != 'undefined') {
-            recipe.steps = [];
-            for(idx in recipeFromRequest.steps) {
-                recipe.steps.push(recipeFromRequest.steps[idx]);
-            }
-        }
+        // if(typeof recipeFromRequest.ingredients != 'undefined') {
+        //     recipe.ingredients = [];
+        //     for(idx in recipeFromRequest.ingredients) {
+        //         recipe.ingredients.push(recipeFromRequest.ingredients[idx]);
+        //     }
+        // }
+        // if(typeof recipeFromRequest.steps != 'undefined') {
+        //     recipe.steps = [];
+        //     for(idx in recipeFromRequest.steps) {
+        //         recipe.steps.push(recipeFromRequest.steps[idx]);
+        //     }
+        // }
 
         callback(recipe);
     });

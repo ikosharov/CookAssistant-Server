@@ -19,65 +19,25 @@ var otherUser = {
 var privateRecipeOfSharedUser = {
     title: "my private recipe",
     isPublic: false,
-    rating: 5,
-    ingredients: [
-        { title: "potatoes" }, 
-        { title: "salt" },
-        { title: "butter" }
-    ],
-    steps: [
-        { title: 'step 1' },
-        { title: 'step 2' },
-        { title: 'step 3' }
-    ]
+    rating: 5
 };
 
 var publicRecipeOfSharedUser = {
     title: "my public recipe",
     isPublic: true,
-    rating: 2,
-     ingredients: [
-        { title: "potatoes" }, 
-        { title: "salt" },
-        { title: "butter" }
-    ],
-    steps: [
-        { title: 'step 1' },
-        { title: 'step 2' },
-        { title: 'step 3' }
-    ]
+    rating: 2
 };
 
 var privateRecipeOfOtherUser = {
     title: "others private recipe",
     isPublic: false,
-    rating: 5,
-     ingredients: [
-        { title: "potatoes" }, 
-        { title: "salt" },
-        { title: "butter" }
-    ],
-    steps: [
-        { title: 'step 1' },
-        { title: 'step 2' },
-        { title: 'step 3' }
-    ]
+    rating: 5
 };
 
 var publicRecipeOfOtherUser = {
     title: "others public recipe",
     isPublic: true,
-    ratign: 2,
-     ingredients: [
-        { title: "potatoes" }, 
-        { title: "salt" },
-        { title: "butter" }
-    ],
-    steps: [
-        { title: 'step 1' },
-        { title: 'step 2' },
-        { title: 'step 3' }
-    ]
+    ratign: 2
 };
 
 module.exports = {
