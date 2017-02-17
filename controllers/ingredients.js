@@ -14,7 +14,7 @@ var extractIngredientFromRequest = function (req, dbEntry, callback) {
         if (typeof ingredientFromRequest.title != 'undefined') {
             ingredient.title = ingredientFromRequest.title;
         }
-      
+
         if (typeof files.image != 'undefined') {
             ingredient.image.data = fs.readFileSync(files.image[0].path);
             ingredient.image.contentType = 'image/png';
@@ -36,12 +36,30 @@ var prepareIngredientForTransmit = function (dbEntry) {
 }
 
 exports.postIngredient = function (req, res) {
-    extractIngredientFromRequest(req, null, function (ingredient) {
-        ingredient.save(function (err) {
-            if (err)
-                res.send(err);
-            else
-                res.json(prepareIngredientForTransmit(ingredient));
+    Recipe.findOne({ _id: req.params.recipe_id }, function (err, dbEntryRecipe) {
+        if (err) {
+            res.send(err);
+            return;
+        }
+
+        if (!dbEntryRecipe) {
+            res.sendStatus(404);
+            return;
+        }
+
+        if (dbEntryRecipe.userId != req.user._id) {
+            res.sendStatus(401);
+            return;
+        }
+
+        extractIngredientFromRequest(req, null, function (ingredient) {
+            dbEntryRecipe.ingredients.push(ingredient);
+            dbEntryRecipe.save(function (err) {
+                if (err)
+                    res.send(err);
+                else
+                    res.json(prepareIngredientForTransmit(ingredient));
+            });
         });
     });
 };
@@ -63,24 +81,17 @@ exports.putIngredient = function (req, res) {
             return;
         }
 
-        dbEntryRecipe.findOne({_id: req.params.ingredient_id}, function(err, dbEntryIngredient) {
-            if (err) {
-                res.send(err);
-                return;
-            }
+        var dbEntryIngredient = dbEntryRecipe.ingredients.find((element) => element._id == req.params.ingredient_id);
 
-            if (!dbEntryIngredient) {
-                res.sendStatus(404);
-                return;
-            }
+        if (!dbEntryIngredient) {
+            res.sendStatus(404);
+            return;
+        }
 
-            extractIngredientFromRequest(req, dbEntryIngredient, function (ingredient) {
-                ingredient.save();
-                res.sendStatus(204);
-            });
+        extractIngredientFromRequest(req, dbEntryIngredient, function (ingredient) {
+            ingredient.save();
+            res.sendStatus(204);
         });
-
-        
     });
 };
 
@@ -102,19 +113,23 @@ exports.deleteIngredient = function (req, res) {
         }
 
 
-        dbEntryRecipe.findOne({_id: req.params.ingredient_id}, function(err, dbEntryIngredient) {
-            if (err) {
-                res.send(err);
-                return;
-            }
+        var dbEntryIngredient = dbEntryRecipe.ingredients.find((element) => element._id == req.params.ingredient_id);
 
-            if (!dbEntryIngredient) {
-                res.sendStatus(404);
-                return;
-            }
+        if (!dbEntryIngredient) {
+            res.sendStatus(404);
+            return;
+        }
 
-            dbEntryIngredient.remove();
-            res.sendStatus(204);
+        dbEntryIngredient.remove(function (err) {
+            if (err)
+                res.send(err)
+            else
+                dbEntryRecipe.save(function (err) {
+                    if (err)
+                        res.send(err);
+                    else
+                        res.sendStatus(204);
+                });
         });
     });
 };

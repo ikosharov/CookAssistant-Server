@@ -28,17 +28,17 @@ router.route('/recipes/:recipe_id')
     .put(authController.isAuthenticated, recipesController.putRecipe)
     .delete(authController.isAuthenticated, recipesController.deleteRecipe);
 
-router.route('/recipes:/:recipe_id/ingredients')
+router.route('/recipes/:recipe_id/ingredients')
     .post(authController.isAuthenticated, ingredientsController.postIngredient);
 
 router.route('/recipes/:recipe_id/ingredients/:ingredient_id')
     .put(authController.isAuthenticated, ingredientsController.putIngredient)
     .delete(authController.isAuthenticated, ingredientsController.deleteIngredient);
 
-router.route('/recipes:/:recipe_id/steps')
+router.route('/recipes/:recipe_id/steps')
     .post(authController.isAuthenticated, stepsController.postStep);
 
-router.route('/recipes/:recipe_id/steps/:steps_id')
+router.route('/recipes/:recipe_id/steps/:step_id')
     .put(authController.isAuthenticated, stepsController.putStep)
     .delete(authController.isAuthenticated, stepsController.deleteStep);
 

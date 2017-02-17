@@ -14,7 +14,7 @@ var extractStepFromRequest = function (req, dbEntry, callback) {
         if (typeof stepFromRequest.title != 'undefined') {
             step.title = stepFromRequest.title;
         }
-      
+
         if (typeof files.image != 'undefined') {
             step.image.data = fs.readFileSync(files.image[0].path);
             step.image.contentType = 'image/png';
@@ -36,12 +36,30 @@ var prepareStepForTransmit = function (dbEntry) {
 }
 
 exports.postStep = function (req, res) {
-    extractStepFromRequest(req, null, function (step) {
-        step.save(function (err) {
-            if (err)
-                res.send(err);
-            else
-                res.json(prepareStepForTransmit(step));
+    Recipe.findOne({ _id: req.params.recipe_id }, function (err, dbEntryRecipe) {
+        if (err) {
+            res.send(err);
+            return;
+        }
+
+        if (!dbEntryRecipe) {
+            res.sendStatus(404);
+            return;
+        }
+
+        if (dbEntryRecipe.userId != req.user._id) {
+            res.sendStatus(401);
+            return;
+        }
+
+        extractStepFromRequest(req, null, function (step) {
+            dbEntryRecipe.steps.push(step);
+            dbEntryRecipe.save(function (err) {
+                if (err)
+                    res.send(err);
+                else
+                    res.json(prepareStepForTransmit(step));
+            });
         });
     });
 };
@@ -63,21 +81,16 @@ exports.putStep = function (req, res) {
             return;
         }
 
-        dbEntryRecipe.findOne({_id: req.params.step_id}, function(err, dbEntryStep) {
-            if (err) {
-                res.send(err);
-                return;
-            }
+        var dbEntryStep = dbEntryRecipe.steps.find((element) => element._id == req.params.step_id);
 
-            if (!dbEntryStep) {
-                res.sendStatus(404);
-                return;
-            }
+        if (!dbEntryStep) {
+            res.sendStatus(404);
+            return;
+        }
 
-            extractStepFromRequest(req, dbEntryStep, function (step) {
-                step.save();
-                res.sendStatus(204);
-            });
+        extractStepFromRequest(req, dbEntryStep, function (step) {
+            step.save();
+            res.sendStatus(204);
         });
     });
 };
@@ -100,19 +113,23 @@ exports.deleteStep = function (req, res) {
         }
 
 
-        dbEntryRecipe.findOne({_id: req.params.step_id}, function(err, dbEntryStep) {
-            if (err) {
+        var dbEntryStep = dbEntryRecipe.steps.find((element) => element._id == req.params.step_id);
+
+        if (!dbEntryStep) {
+            res.sendStatus(404);
+            return;
+        }
+
+        dbEntryStep.remove(function (err) {
+            if (err)
                 res.send(err);
-                return;
-            }
-
-            if (!dbEntryStep) {
-                res.sendStatus(404);
-                return;
-            }
-
-            dbEntryStep.remove();
-            res.sendStatus(204);
+            else
+                dbEntryRecipe.save(function (err) {
+                    if (err)
+                        res.send(err);
+                    else
+                        res.sendStatus(204);
+                });
         });
     });
 };

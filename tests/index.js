@@ -470,4 +470,120 @@ describe('Routes', function () {
                 });
         });
     });
+
+    describe("ingredients controller", function () {
+        it('user should be able to add, update and delete ingredient', function (done) {
+            var testsDir = path.resolve("tests");
+            var testImagePath = path.join(testsDir, "test.png");
+
+            // add ingredient to recipe
+            request(url)
+                .post('/signin')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    var token = res.body.token;
+                    request(url)
+                        .post(`/recipes/${privateRecipeOfSharedUser._id}/ingredients`)
+                        .field('data', JSON.stringify({ title: 'ingr 1' }))
+                        .attach('image', testImagePath)
+                        .set('Authorization', `JWT ${token}`)
+                        .end(function (err, res) {
+                            if (err) {
+                                throw err;
+                            }
+
+                            assert.equal(200, res.status);
+                            assert(res.body._id);
+                            assert(res.body.title);
+                            assert(res.body.image);
+
+                            var ingredient = res.body;
+
+                            // update the ingredient
+                            request(url)
+                                .put(`/recipes/${privateRecipeOfSharedUser._id}/ingredients/${ingredient._id}`)
+                                .field('data', JSON.stringify({ title: 'ingr 1 - altered' }))
+                                .set('Authorization', `JWT ${token}`)
+                                .end(function (err, res) {
+                                    if (err) {
+                                        throw err;
+                                    }
+
+                                    assert.equal(204, res.status);
+
+                                    // delete the ingredient
+                                    request(url)
+                                        .delete(`/recipes/${privateRecipeOfSharedUser._id}/ingredients/${ingredient._id}`)
+                                        .set('Authorization', `JWT ${token}`)
+                                        .end(function (err, res) {
+                                            if (err) {
+                                                throw err;
+                                            }
+
+                                            assert.equal(204, res.status);
+                                            done();
+                                        });
+                                });
+                        });
+                });
+        });
+    });
+
+    describe("steps controller", function () {
+        it('user should be able to add, update and delete step', function (done) {
+            var testsDir = path.resolve("tests");
+            var testImagePath = path.join(testsDir, "test.png");
+
+            // add step to recipe
+            request(url)
+                .post('/signin')
+                .send(sharedUser)
+                .end(function (err, res) {
+                    var token = res.body.token;
+                    request(url)
+                        .post(`/recipes/${privateRecipeOfSharedUser._id}/steps`)
+                        .field('data', JSON.stringify({ title: 'step 1' }))
+                        .attach('image', testImagePath)
+                        .set('Authorization', `JWT ${token}`)
+                        .end(function (err, res) {
+                            if (err) {
+                                throw err;
+                            }
+
+                            assert.equal(200, res.status);
+                            assert(res.body._id);
+                            assert(res.body.title);
+                            assert(res.body.image);
+
+                            var step = res.body;
+
+                            // update the step
+                            request(url)
+                                .put(`/recipes/${privateRecipeOfSharedUser._id}/steps/${step._id}`)
+                                .field('data', JSON.stringify({ title: 'step 1 - altered' }))
+                                .set('Authorization', `JWT ${token}`)
+                                .end(function (err, res) {
+                                    if (err) {
+                                        throw err;
+                                    }
+
+                                    assert.equal(204, res.status);
+
+                                    // delete the step
+                                    request(url)
+                                        .delete(`/recipes/${privateRecipeOfSharedUser._id}/steps/${step._id}`)
+                                        .set('Authorization', `JWT ${token}`)
+                                        .end(function (err, res) {
+                                            if (err) {
+                                                throw err;
+                                            }
+
+                                            assert.equal(204, res.status);
+                                            done();
+                                        });
+                                });
+                        });
+                });
+        });
+    });
 });
