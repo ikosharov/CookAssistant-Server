@@ -91,8 +91,17 @@ exports.putStep = function (req, res) {
         }
 
         extractStepFromRequest(req, dbEntryStep, function (step) {
-            step.save();
-            res.sendStatus(204);
+            step.save(function (err) {
+                if (err)
+                    res.send(err);
+                else
+                    dbEntryRecipe.save(function (err) {
+                        if (err)
+                            res.send(err);
+                        else
+                            res.sendStatus(204);
+                    });
+            });
         });
     });
 };

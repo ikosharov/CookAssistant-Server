@@ -91,8 +91,17 @@ exports.putIngredient = function (req, res) {
         }
 
         extractIngredientFromRequest(req, dbEntryIngredient, function (ingredient) {
-            ingredient.save();
-            res.sendStatus(204);
+            ingredient.save(function (err) {
+                if (err)
+                    res.send(err);
+                else
+                    dbEntryRecipe.save(function (err) {
+                        if (err)
+                            res.send(err);
+                        else
+                            res.sendStatus(204);
+                    });
+            });
         });
     });
 };
