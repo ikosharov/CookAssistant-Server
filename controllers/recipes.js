@@ -59,18 +59,6 @@ var extractRecipeFromRequest = function (req, dbEntry, callback) {
             recipe.image.data = fs.readFileSync(files.image[0].path);
             recipe.image.contentType = 'image/png';
         }
-        // if(typeof recipeFromRequest.ingredients != 'undefined') {
-        //     recipe.ingredients = [];
-        //     for(idx in recipeFromRequest.ingredients) {
-        //         recipe.ingredients.push(recipeFromRequest.ingredients[idx]);
-        //     }
-        // }
-        // if(typeof recipeFromRequest.steps != 'undefined') {
-        //     recipe.steps = [];
-        //     for(idx in recipeFromRequest.steps) {
-        //         recipe.steps.push(recipeFromRequest.steps[idx]);
-        //     }
-        // }
 
         callback(recipe);
     });
