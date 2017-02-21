@@ -3,6 +3,9 @@ var fs = require('fs');
 
 var Recipe = require('../models/recipe');
 var Ingredient = require('../models/ingredient');
+var prepareIngredientForTransmit = require('./ingredients').prepareIngredientForTransmit;
+var prepareStepForTransmit = require('./steps').prepareStepForTransmit;
+
 var Step = require('../models/step');
 
 // all details
@@ -14,8 +17,18 @@ var prepareRecipeDetailsForTransmit = function (dbEntry) {
     dataToTransmit.isPublic = dbEntry.isPublic;
     dataToTransmit.rating = dbEntry.rating;
     
-    dataToTransmit.ingredients = dbEntry.ingredients || [];
-    dataToTransmit.steps = dbEntry.steps || [];
+    dataToTransmit.ingredients = [];
+    if(dbEntry.ingredients) {
+        dbEntry.ingredients.forEach(function(ingredient) {
+            dataToTransmit.ingredients.push(prepareIngredientForTransmit(ingredient));
+        });
+    }
+    dataToTransmit.steps = [];
+    if(dbEntry.steps) {
+        dbEntry.steps.forEach(function(step) {
+            dataToTransmit.steps.push(prepareStepForTransmit(step));
+        });
+    }
 
     if (dbEntry.image && dbEntry.image.data) {
         dataToTransmit.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');

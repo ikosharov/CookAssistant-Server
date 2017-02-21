@@ -35,6 +35,8 @@ var prepareIngredientForTransmit = function (dbEntry) {
     return dataToTransmit;
 }
 
+exports.prepareIngredientForTransmit = prepareIngredientForTransmit;
+
 exports.postIngredient = function (req, res) {
     Recipe.findOne({ _id: req.params.recipe_id }, function (err, dbEntryRecipe) {
         if (err) {
