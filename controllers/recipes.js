@@ -16,16 +16,16 @@ var prepareRecipeDetailsForTransmit = function (dbEntry) {
     dataToTransmit.title = dbEntry.title;
     dataToTransmit.isPublic = dbEntry.isPublic;
     dataToTransmit.rating = dbEntry.rating;
-    
+
     dataToTransmit.ingredients = [];
-    if(dbEntry.ingredients) {
-        dbEntry.ingredients.forEach(function(ingredient) {
+    if (dbEntry.ingredients) {
+        dbEntry.ingredients.forEach(function (ingredient) {
             dataToTransmit.ingredients.push(prepareIngredientForTransmit(ingredient));
         });
     }
     dataToTransmit.steps = [];
-    if(dbEntry.steps) {
-        dbEntry.steps.forEach(function(step) {
+    if (dbEntry.steps) {
+        dbEntry.steps.forEach(function (step) {
             dataToTransmit.steps.push(prepareStepForTransmit(step));
         });
     }
@@ -85,7 +85,7 @@ exports.getRecipes = function (req, res) {
     if (req.query.user == 'current') {
         filter.userId = req.user._id;
     }
-    if (req.query.visibility != 'public' && typeof req.query.visibility != 'undefined' && 
+    if (req.query.visibility != 'public' && typeof req.query.visibility != 'undefined' &&
         req.query.user != 'current' && typeof req.query.user != 'undefined') {
         // not allowed to request non-public recipes of other users
         res.sendStatus(401);
@@ -110,7 +110,7 @@ exports.getRecipe = function (req, res) {
         if (err) {
             res.send(err);
         } else {
-            
+
             if (!recipe.isPublic && recipe.userId != req.user._id) {
                 // not allowed to request non-public recipes of other users
                 res.sendStatus(401);
@@ -150,8 +150,12 @@ exports.putRecipe = function (req, res) {
         }
 
         extractRecipeFromRequest(req, dbEntry, function (recipe) {
-            recipe.save();
-            res.sendStatus(204);
+            recipe.save(function (err) {
+                if (err)
+                    send(err);
+                else
+                    res.sendStatus(204);
+            });
         });
     });
 };
