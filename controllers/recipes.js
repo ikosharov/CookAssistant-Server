@@ -177,7 +177,12 @@ exports.deleteRecipe = function (req, res) {
             return;
         }
 
-        recipe.remove();
-        res.sendStatus(204);
+        recipe.remove(function (err) {
+            if (err)
+                res.send(err);
+            else
+                res.sendStatus(204);
+        });
+
     });
 };
