@@ -4,16 +4,16 @@ var bcrypt = require('bcrypt-nodejs');
 // validators
 var usernameValidator = [
     function (val) {
-        return val.length >= 4;
+        return val.length >= 1;
     },
-    "username should be at least 4 characters"
+    "username should be at least 1 characters"
 ];
 
 var passwordValidator = [
     function (val) {
-        return val.length >= 4;
+        return val.length >= 1;
     },
-    "password should be at least 4 characters"
+    "password should be at least 1 characters"
 ];
 
 // Define our user schema
