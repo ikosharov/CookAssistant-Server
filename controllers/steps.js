@@ -99,7 +99,7 @@ exports.putStep = function (req, res) {
                         if (err)
                             res.send(err);
                         else
-                            res.sendStatus(204);
+                            res.send(prepareStepForTransmit(step));
                     });
             });
         });

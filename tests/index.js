@@ -158,20 +158,6 @@ describe('Routes', function () {
                 });
         });
 
-        it('should not be able to sign up with invalid credentials', function (done) {
-            var invalidCredentials = {
-                username: "aa",
-                password: "bb"
-            };
-            request(url)
-                .post('/signup')
-                .send(invalidCredentials)
-                .end(function (err, res) {
-                    assert(!res.body.token);
-                    done();
-                });
-        });
-
         it('should not be able to sign up with missing password', function (done) {
             var missingPasswordCredentials = {
                 username: "someuser"
@@ -509,7 +495,7 @@ describe('Routes', function () {
                                         throw err;
                                     }
 
-                                    assert.equal(204, res.status);
+                                    assert.equal(200, res.status);
 
                                     // delete the ingredient
                                     request(url)
@@ -567,7 +553,7 @@ describe('Routes', function () {
                                         throw err;
                                     }
 
-                                    assert.equal(204, res.status);
+                                    assert.equal(200, res.status);
 
                                     // delete the step
                                     request(url)
