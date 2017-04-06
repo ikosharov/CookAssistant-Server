@@ -14,7 +14,10 @@ exports.signUp = function (req, res) {
 
   user.save(function (err) {
     if (err) {
-      res.send(err);
+      res.send({
+        error: err,
+        username: username
+      });
     } else {
       var token = jwt.sign(user, config.tokenSecret);
 
@@ -29,13 +32,13 @@ exports.signIn = function (req, res) {
 
   User.findOne({ username: username }, function (err, user) {
     if (err || !user) {
-      res.status(401).send({ message: 'invalid username or password' });
+      res.status(401).send({ error: 'invalid username or password', username: username });
       return;
     }
 
     user.verifyPassword(password, function (err, isMatch) {
       if (err || !isMatch) {
-        res.status(401).send({ message: 'invalid username or password' });
+        res.status(401).send({ error: 'invalid username or password', username: username });
         return;
       }
 
