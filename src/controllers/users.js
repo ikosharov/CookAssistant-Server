@@ -1,52 +1,46 @@
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-var User = require('../models/user');
-var config = require('../../web.config');
+const User = require('../models/user');
+const config = require('../../web.config');
 
-exports.signUp = function (req, res) {
-  var username = req.body.username || '';
-  var password = req.body.password || '';
+exports.signUp = (req, res) => {
+  const { username = '', password = '' } = req.body
 
-  var user = new User({
-    username: username,
-    password: password
-  });
+  const user = new User({ username, password })
 
-  user.save(function (err) {
+  user.save((err) => {
     if (err) {
       res.send(err);
     } else {
-      var token = jwt.sign(user, config.tokenSecret);
-
-      res.send({ token: token, id: user.id });
+      const token = jwt.sign(user, config.tokenSecret);
+      res.send({ token, id: user.id });
     }
   });
 };
 
-exports.signIn = function (req, res) {
-  var username = req.body.username || '';
-  var password = req.body.password || '';
+exports.signIn = (req, res) => {
+  const { username = '', password = '' } = req.body
 
-  User.findOne({ username: username }, function (err, user) {
+  User.findOne({ username }, (err, user) => {
     if (err || !user) {
       res.status(401).send({ message: 'invalid username or password' });
       return;
     }
 
-    user.verifyPassword(password, function (err, isMatch) {
+    user.verifyPassword(password, (err, isMatch) => {
       if (err || !isMatch) {
         res.status(401).send({ message: 'invalid username or password' });
         return;
       }
 
-      var token = jwt.sign(user, config.tokenSecret);
-      res.send({ token: token, id: user.id });
+      const token = jwt.sign(user, config.tokenSecret);
+      res.send({ token, id: user.id });
     });
   });
 }
 
-exports.userInfo = function (req, res) {
-  User.findOne({ _id: req.user._id }, function (err, user) {
+exports.userInfo = (req, res) => {
+  User.findOne({ _id: req.user._id }, (err, user) => {
     if (err)
       res.send(err);
 

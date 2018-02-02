@@ -1,17 +1,17 @@
-var express = require('express');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var bodyParser = require('body-parser');
-var cors = require('cors');
-var router = require('./routes');
-var config = require('../web.config');
+const express = require('express');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const router = require('./routes');
+const config = require('../web.config');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.databaseUrl);
 
-var port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
-var app = express();
+const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

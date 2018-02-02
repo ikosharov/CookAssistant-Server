@@ -1,15 +1,15 @@
-var mongoose = require('mongoose');
-var ingredientSchema = require('./ingredient');
-var stepSchema = require('./step');
+const mongoose = require('mongoose');
+const ingredientSchema = require('./ingredient');
+const stepSchema = require('./step');
 
-var ratingValidator = [
-    function (val) {
-        return val >= 0 && val <= 5;
-    },
-    "rating should be between 0 and 5 stars"
+const ratingValidator = [
+  function (val) {
+    return val >= 0 && val <= 5;
+  },
+  "rating should be between 0 and 5 stars"
 ];
 
-var schema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   title: {
     type: String,
     required: true
