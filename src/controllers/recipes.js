@@ -1,78 +1,35 @@
-const multiparty = require('multiparty');
-const fs = require('fs');
-
 const Recipe = require('../models/recipe');
 const prepareIngredientForTransmit = require('./ingredients').prepareIngredientForTransmit;
 const prepareStepForTransmit = require('./steps').prepareStepForTransmit;
 
-
-// all details
 const prepareRecipeDetailsForTransmit = function (dbEntry) {
-  const dataToTransmit = {};
-  dataToTransmit._id = dbEntry._id.toString();
-  dataToTransmit.userId = dbEntry.userId.toString();
-  dataToTransmit.title = dbEntry.title;
-  dataToTransmit.isPublic = dbEntry.isPublic;
-  dataToTransmit.rating = dbEntry.rating;
-
-  dataToTransmit.ingredients = [];
-  if (dbEntry.ingredients) {
-    dbEntry.ingredients.forEach(function (ingredient) {
-      dataToTransmit.ingredients.push(prepareIngredientForTransmit(ingredient));
-    });
+  return {
+    _id: dbEntry._id.toString(),
+    userId: dbEntry.userId.toString(),
+    title: dbEntry.title,
+    isPublic: dbEntry.isPublic,
+    rating: dbEntry.rating,
+    ingredients: dbEntry.ingredients.map(i => prepareIngredientForTransmit(i)),
+    steps: dbEntry.steps.map(s => prepareStepForTransmit(s)),
+    image_id: dbEntry.image_id
   }
-  dataToTransmit.steps = [];
-  if (dbEntry.steps) {
-    dbEntry.steps.forEach(function (step) {
-      dataToTransmit.steps.push(prepareStepForTransmit(step));
-    });
-  }
-
-  if (dbEntry.image && dbEntry.image.data) {
-    dataToTransmit.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
-  }
-  return dataToTransmit;
 }
 
-// no ingredients, steps to prepare and their images
 const prepareRecipeSummaryForTransmit = function (dbEntry) {
-  const dataToTransmit = {};
-  dataToTransmit._id = dbEntry._id.toString();
-  dataToTransmit.userId = dbEntry.userId.toString();
-  dataToTransmit.title = dbEntry.title;
-  dataToTransmit.isPublic = dbEntry.isPublic;
-  dataToTransmit.rating = dbEntry.rating;
-
-  if (dbEntry.image && dbEntry.image.data) {
-    dataToTransmit.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
+  return {
+    _id: dbEntry._id.toString(),
+    userId: dbEntry.userId.toString(),
+    title: dbEntry.title,
+    isPublic: dbEntry.isPublic,
+    rating: dbEntry.rating,
+    image_id: dbEntry.image_id
   }
-  return dataToTransmit;
 }
 
 const extractRecipeFromRequest = function (req, dbEntry, callback) {
-  const form = new multiparty.Form();
-  form.parse(req, function (err, fields, files) {
-    const recipe = (dbEntry != null) ? dbEntry : new Recipe();
-    recipe.userId = req.user._id;
-
-    const recipeFromRequest = JSON.parse(fields.data);
-
-    if (typeof recipeFromRequest.title !== 'undefined') {
-      recipe.title = recipeFromRequest.title;
-    }
-    if (typeof recipeFromRequest.isPublic !== 'undefined') {
-      recipe.isPublic = recipeFromRequest.isPublic;
-    }
-    if (typeof recipeFromRequest.rating !== 'undefined') {
-      recipe.rating = recipeFromRequest.rating;
-    }
-    if (typeof files.image !== 'undefined') {
-      recipe.image.data = fs.readFileSync(files.image[0].path);
-      recipe.image.contentType = 'image/png';
-    }
-
-    callback(recipe);
-  });
+  const recipe = (dbEntry != null) ? dbEntry : new Recipe();
+  const recipeFromRequest = JSON.parse(req.body);
+  callback({...recipe, ...recipeFromRequest});
 }
 
 exports.getRecipes = function (req, res) {

@@ -6,6 +6,7 @@ const recipesController = require('./controllers/recipes');
 const ingredientsController = require('./controllers/ingredients');
 const stepsController = require('./controllers/steps');
 const authController = require('./controllers/auth');
+const imagesController = require('./controllers/images')
 
 router.route('/')
   .get(welcomeController.greet);
@@ -41,5 +42,11 @@ router.route('/recipes/:recipe_id/steps')
 router.route('/recipes/:recipe_id/steps/:step_id')
   .put(authController.isAuthenticated, stepsController.putStep)
   .delete(authController.isAuthenticated, stepsController.deleteStep);
+
+router.route('/images')
+  .post(authController.isAuthenticated, imagesController.postImage)
+
+router.route('/images/:image_id')
+  .get(imagesController.getImage)
 
 module.exports = router;

@@ -1,38 +1,18 @@
-const multiparty = require('multiparty');
-const fs = require('fs');
-
 const Recipe = require('../models/recipe');
 const Ingredient = require('../models/ingredient');
 
 const extractIngredientFromRequest = function (req, dbEntry, callback) {
-  const form = new multiparty.Form();
-  form.parse(req, function (err, fields, files) {
-    const ingredient = (dbEntry != null) ? dbEntry : new Ingredient();
-
-    const ingredientFromRequest = JSON.parse(fields.data);
-
-    if (typeof ingredientFromRequest.title !== 'undefined') {
-      ingredient.title = ingredientFromRequest.title;
-    }
-
-    if (typeof files.image !== 'undefined') {
-      ingredient.image.data = fs.readFileSync(files.image[0].path);
-      ingredient.image.contentType = 'image/png';
-    }
-
-    callback(ingredient);
-  });
+  const ingredient = (dbEntry != null) ? dbEntry : new Ingredient();
+  const ingredientFromRequest = JSON.parse(req.body);
+  callback({...ingredient, ...ingredientFromRequest});
 }
 
 const prepareIngredientForTransmit = function (dbEntry) {
-    const dataToTransmit = {};
-    dataToTransmit._id = dbEntry._id.toString();
-    dataToTransmit.title = dbEntry.title;
-
-    if (dbEntry.image && dbEntry.image.data) {
-      dataToTransmit.image = new Buffer(dbEntry.image.data, 'binary').toString('base64');
-    }
-    return dataToTransmit;
+  return {
+    _id: dbEntry._id.toString(),
+    title: dbEntry.title,
+    image_id: dbEntry.image_id
+  };
 }
 
 exports.prepareIngredientForTransmit = prepareIngredientForTransmit;
