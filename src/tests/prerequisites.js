@@ -1,40 +1,40 @@
 // function to generate random usernames
-var generateRandomString = function () {
-    var randomNumStr = Math.random().toString();
+let generateRandomString = function () {
+    let randomNumStr = Math.random().toString();
     return randomNumStr.substr(randomNumStr.indexOf(".") + 1);
 }
 
 // users that will be reused between tests
-var sharedUser = {
+let sharedUser = {
     username: "common" + generateRandomString(),
     password: "1234"
 };
 
-var otherUser = {
+let otherUser = {
     username: "other" + generateRandomString(),
     password: "1234"
 };
 
 // recipes that will be reused between tests
-var privateRecipeOfSharedUser = {
+let privateRecipeOfSharedUser = {
     title: "my private recipe",
     isPublic: false,
     rating: 5
 };
 
-var publicRecipeOfSharedUser = {
+let publicRecipeOfSharedUser = {
     title: "my public recipe",
     isPublic: true,
     rating: 2
 };
 
-var privateRecipeOfOtherUser = {
+let privateRecipeOfOtherUser = {
     title: "others private recipe",
     isPublic: false,
     rating: 5
 };
 
-var publicRecipeOfOtherUser = {
+let publicRecipeOfOtherUser = {
     title: "others public recipe",
     isPublic: true,
     ratign: 2

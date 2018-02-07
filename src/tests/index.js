@@ -1,35 +1,35 @@
-var assert = require('assert');
-var request = require('supertest');
-var _ = require('lodash');
-var utils = require('./utils');
-var path = require('path');
+let assert = require('assert');
+let request = require('supertest');
+let _ = require('lodash');
+let utils = require('./utils');
+let path = require('path');
 
-var prerequisites = require('./prerequisites');
+let prerequisites = require('./prerequisites');
 
 describe('Routes', function () {
-    var url = 'http://localhost:3000';
+    let url = 'http://localhost:3000';
 
-    var generateRandomString = prerequisites.generateRandomString;
-    var sharedUser = prerequisites.sharedUser;
-    var otherUser = prerequisites.otherUser;
-    var privateRecipeOfSharedUser = prerequisites.privateRecipeOfSharedUser;
-    var publicRecipeOfSharedUser = prerequisites.publicRecipeOfSharedUser;
-    var privateRecipeOfOtherUser = prerequisites.privateRecipeOfOtherUser;
-    var publicRecipeOfOtherUser = prerequisites.publicRecipeOfOtherUser;
+    let generateRandomString = prerequisites.generateRandomString;
+    let sharedUser = prerequisites.sharedUser;
+    let otherUser = prerequisites.otherUser;
+    let privateRecipeOfSharedUser = prerequisites.privateRecipeOfSharedUser;
+    let publicRecipeOfSharedUser = prerequisites.publicRecipeOfSharedUser;
+    let privateRecipeOfOtherUser = prerequisites.privateRecipeOfOtherUser;
+    let publicRecipeOfOtherUser = prerequisites.publicRecipeOfOtherUser;
 
     before(function (done) {
         // create shared user and its recipes
-        var p1 = new Promise(function (resolve, reject) {
+        let p1 = new Promise(function (resolve, reject) {
             request(url)
                 .post('/signup')
                 .send(sharedUser)
                 .end(function (err, res) {
                     if (err) reject();
-                    var token = res.body.token;
+                    let token = res.body.token;
                     request(url)
                         .post("/recipes")
                         .set('Authorization', 'JWT ' + token)
-                        .field('data', JSON.stringify(privateRecipeOfSharedUser))
+                        .send(JSON.stringify(privateRecipeOfSharedUser))
                         .end(function (err, res) {
                             if (err) reject();
                             privateRecipeOfSharedUser._id = res.body._id;
@@ -37,7 +37,7 @@ describe('Routes', function () {
                             request(url)
                                 .post("/recipes")
                                 .set('Authorization', 'JWT ' + token)
-                                .field('data', JSON.stringify(publicRecipeOfSharedUser))
+                                .send(JSON.stringify(publicRecipeOfSharedUser))
                                 .end(function (err, res) {
                                     if (err) reject();
                                     publicRecipeOfSharedUser._id = res.body._id;
@@ -56,17 +56,17 @@ describe('Routes', function () {
         });
 
         // create the other user and one recipe for it
-        var p2 = new Promise(function (resolve, reject) {
+        let p2 = new Promise(function (resolve, reject) {
             request(url)
                 .post('/signup')
                 .send(otherUser)
                 .end(function (err, res) {
                     if (err) reject();
-                    var token = res.body.token;
+                    let token = res.body.token;
                     request(url)
                         .post("/recipes")
                         .set('Authorization', 'JWT ' + token)
-                        .field('data', JSON.stringify(privateRecipeOfOtherUser))
+                        .send(JSON.stringify(privateRecipeOfOtherUser))
                         .end(function (err, res) {
                             if (err) reject();
                             privateRecipeOfOtherUser._id = res.body._id;
@@ -74,7 +74,7 @@ describe('Routes', function () {
                             request(url)
                                 .post("/recipes")
                                 .set('Authorization', 'JWT ' + token)
-                                .field('data', JSON.stringify(publicRecipeOfOtherUser))
+                                .send(JSON.stringify(publicRecipeOfOtherUser))
                                 .end(function (err, res) {
                                     if (err) reject();
                                     publicRecipeOfOtherUser._id = res.body._id;
@@ -113,7 +113,7 @@ describe('Routes', function () {
 
     describe('users controller', function () {
         it('should be able to sign up users', function (done) {
-            var credentials = {
+            let credentials = {
                 username: 'user' + generateRandomString(),
                 password: 'password1'
             }
@@ -159,7 +159,7 @@ describe('Routes', function () {
         });
 
         it('should not be able to sign up with missing password', function (done) {
-            var missingPasswordCredentials = {
+            let missingPasswordCredentials = {
                 username: "someuser"
             };
             request(url)
@@ -172,7 +172,7 @@ describe('Routes', function () {
         });
 
         it('should not be able to sign in with wrong credentials', function (done) {
-            var invalidCredentials = {
+            let invalidCredentials = {
                 username: sharedUser.username,
                 password: "ivalidPassword"
             };
@@ -186,7 +186,7 @@ describe('Routes', function () {
         });
 
         it('should not be able to sign in with missing password', function (done) {
-            var missingPasswordCredentials = {
+            let missingPasswordCredentials = {
                 username: "someuser"
             };
             request(url)
@@ -217,7 +217,7 @@ describe('Routes', function () {
                             assert.equal(200, res.status);
                             assert(Array.isArray(res.body));
 
-                            var recipes = res.body;
+                            let recipes = res.body;
                             assert(recipes.length > 0);
                             recipes.forEach(function (recipe) {
                                 assert(recipe.isPublic);
@@ -244,7 +244,7 @@ describe('Routes', function () {
                             assert.equal(200, res.status);
                             assert(Array.isArray(res.body));
 
-                            var recipes = res.body;
+                            let recipes = res.body;
                             assert(recipes.length > 0);
                             recipes.forEach(function (recipe) {
                                 assert.equal(sharedUser._id, recipe.userId);
@@ -298,7 +298,7 @@ describe('Routes', function () {
 
         it('user should be able to create and delete recipes', function (done) {
             // generate some recipe
-            var recipe = {
+            let recipe = {
                 title: "new recipe",
                 isPublic: "false",
             }
@@ -308,10 +308,10 @@ describe('Routes', function () {
                 .post('/signin')
                 .send(sharedUser)
                 .end(function (err, res) {
-                    var token = res.body.token;
+                    let token = res.body.token;
                     request(url)
                         .post("/recipes")
-                        .field('data', JSON.stringify(recipe))
+                        .send(JSON.stringify(recipe))
                         .set('Authorization', `JWT ${token}`)
                         .end(function (err, res) {
                             if (err) {
@@ -341,7 +341,7 @@ describe('Routes', function () {
 
         it('user should be able to create recipes with images', function (done) {
             // generate some recipe
-            var recipe = {
+            let recipe = {
                 title: "new recipe",
                 isPublic: "false",
             }
@@ -351,14 +351,14 @@ describe('Routes', function () {
                 .post('/signin')
                 .send(sharedUser)
                 .end(function (err, res) {
-                    var token = res.body.token;
+                    let token = res.body.token;
 
-                    var testsDir = path.resolve("tests");
-                    var testImagePath = path.join(testsDir, "test.png");
+                    let testsDir = path.resolve("tests");
+                    let testImagePath = path.join(testsDir, "test.png");
 
                     request(url)
                         .post("/recipes")
-                        .field('data', JSON.stringify(recipe))
+                        .send(JSON.stringify(recipe))
                         .attach("image", testImagePath)
                         .set('Authorization', `JWT ${token}`)
                         .end(function (err, res) {
@@ -381,7 +381,7 @@ describe('Routes', function () {
                 .post('/signin')
                 .send(sharedUser)
                 .end(function (err, res) {
-                    var token = res.body.token;
+                    let token = res.body.token;
 
                     // get all recipes
                     request(url)
@@ -390,13 +390,13 @@ describe('Routes', function () {
                         .end(function (err, res) {
 
                             // find the sharedUserrecipe which we know already exists
-                            var idx = _.findIndex(res.body, function (recipe) {
+                            let idx = _.findIndex(res.body, function (recipe) {
                                 return recipe._id == privateRecipeOfSharedUser._id;
                             });
 
                             // modify the recipe returned from the server
-                            var returnedRecipe = res.body[idx];
-                            var recipe = {
+                            let returnedRecipe = res.body[idx];
+                            let recipe = {
                                 _id: returnedRecipe._id,
                                 title: "modified",
                                 isPublic: returnedRecipe.isPublic.toString()
@@ -405,7 +405,7 @@ describe('Routes', function () {
                             // send the modified recipe back to the server
                             request(url)
                                 .put("/recipes/" + recipe._id)
-                                .field('data', JSON.stringify(recipe))
+                                .send(JSON.stringify(recipe))
                                 .set('Authorization', `JWT ${token}`)
                                 .end(function (err, res) {
                                     assert.equal(204, res.status);
@@ -434,7 +434,7 @@ describe('Routes', function () {
         });
 
         it('user should not be able to update personal recipe of another user', function (done) {
-            var modifiedRecipe = utils.clone(privateRecipeOfOtherUser);
+            let modifiedRecipe = utils.clone(privateRecipeOfOtherUser);
             modifiedRecipe.title = "modified";
             modifiedRecipe.isPublic = "true";
 
@@ -444,7 +444,7 @@ describe('Routes', function () {
                 .end(function (err, res) {
                     request(url)
                         .put("/recipes/" + privateRecipeOfOtherUser._id)
-                        .field('data', JSON.stringify(modifiedRecipe))
+                        .send(JSON.stringify(modifiedRecipe))
                         .set('Authorization', `JWT ${res.body.token}`)
                         .end(function (err, res) {
                             if (err) {
@@ -459,18 +459,18 @@ describe('Routes', function () {
 
     describe("ingredients controller", function () {
         it('user should be able to add, update and delete ingredient', function (done) {
-            var testsDir = path.resolve("tests");
-            var testImagePath = path.join(testsDir, "test.png");
+            let testsDir = path.resolve("tests");
+            let testImagePath = path.join(testsDir, "test.png");
 
             // add ingredient to recipe
             request(url)
                 .post('/signin')
                 .send(sharedUser)
                 .end(function (err, res) {
-                    var token = res.body.token;
+                    let token = res.body.token;
                     request(url)
                         .post(`/recipes/${privateRecipeOfSharedUser._id}/ingredients`)
-                        .field('data', JSON.stringify({ title: 'ingr 1' }))
+                        .send(JSON.stringify({ title: 'ingr 1' }))
                         .attach('image', testImagePath)
                         .set('Authorization', `JWT ${token}`)
                         .end(function (err, res) {
@@ -483,12 +483,12 @@ describe('Routes', function () {
                             assert(res.body.title);
                             assert(res.body.image);
 
-                            var ingredient = res.body;
+                            let ingredient = res.body;
 
                             // update the ingredient
                             request(url)
                                 .put(`/recipes/${privateRecipeOfSharedUser._id}/ingredients/${ingredient._id}`)
-                                .field('data', JSON.stringify({ title: 'ingr 1 - altered' }))
+                                .send(JSON.stringify({ title: 'ingr 1 - altered' }))
                                 .set('Authorization', `JWT ${token}`)
                                 .end(function (err, res) {
                                     if (err) {
@@ -517,18 +517,18 @@ describe('Routes', function () {
 
     describe("steps controller", function () {
         it('user should be able to add, update and delete step', function (done) {
-            var testsDir = path.resolve("tests");
-            var testImagePath = path.join(testsDir, "test.png");
+            let testsDir = path.resolve("tests");
+            let testImagePath = path.join(testsDir, "test.png");
 
             // add step to recipe
             request(url)
                 .post('/signin')
                 .send(sharedUser)
                 .end(function (err, res) {
-                    var token = res.body.token;
+                    let token = res.body.token;
                     request(url)
                         .post(`/recipes/${privateRecipeOfSharedUser._id}/steps`)
-                        .field('data', JSON.stringify({ title: 'step 1' }))
+                        .send(JSON.stringify({ title: 'step 1' }))
                         .attach('image', testImagePath)
                         .set('Authorization', `JWT ${token}`)
                         .end(function (err, res) {
@@ -541,12 +541,12 @@ describe('Routes', function () {
                             assert(res.body.title);
                             assert(res.body.image);
 
-                            var step = res.body;
+                            let step = res.body;
 
                             // update the step
                             request(url)
                                 .put(`/recipes/${privateRecipeOfSharedUser._id}/steps/${step._id}`)
-                                .field('data', JSON.stringify({ title: 'step 1 - altered' }))
+                                .send(JSON.stringify({ title: 'step 1 - altered' }))
                                 .set('Authorization', `JWT ${token}`)
                                 .end(function (err, res) {
                                     if (err) {

@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/index.js --opts tests/mocha.opts",
-    "test-debug": "mocha tests/index.js --debug-brk",
+    "test": "mocha src/tests/index.js --opts src/tests/mocha.opts",
     "build": "webpack",
     "build-and-watch": "webpack --watch",
     "start": "node dist/server.js",
