@@ -3,7 +3,7 @@ const Types = Schema.Types
 
 const schema = new Schema({
   title: { type: Types.String, required: true},
-  image: { data: Types.Buffer, contentType: String }
+  imageId: { type: Types.ObjectId }
 });
 
 module.exports = schema;

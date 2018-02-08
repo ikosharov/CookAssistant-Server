@@ -63,7 +63,7 @@ exports.putStep = function (req, res) {
       return;
     }
 
-    const dbEntryStep = dbEntryRecipe.steps.find((element) => element._id === req.params.step_id);
+    const dbEntryStep = dbEntryRecipe.steps.find((element) => element._id.toString() === req.params.step_id);
 
     if (!dbEntryStep) {
       res.sendStatus(404);
@@ -103,7 +103,7 @@ exports.deleteStep = function (req, res) {
       return;
     }
 
-    const dbEntryStep = dbEntryRecipe.steps.find((element) => element._id === req.params.step_id);
+    const dbEntryStep = dbEntryRecipe.steps.find((element) => element._id.toString() === req.params.step_id);
 
     if (!dbEntryStep) {
       res.sendStatus(404);

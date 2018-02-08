@@ -63,7 +63,7 @@ exports.putIngredient = function (req, res) {
       return;
     }
 
-    const dbEntryIngredient = dbEntryRecipe.ingredients.find((element) => element._id === req.params.ingredient_id);
+    const dbEntryIngredient = dbEntryRecipe.ingredients.find((element) => element._id.toString() === req.params.ingredient_id);
 
     if (!dbEntryIngredient) {
       res.sendStatus(404);
@@ -103,7 +103,7 @@ exports.deleteIngredient = function (req, res) {
       return;
     }
 
-    const dbEntryIngredient = dbEntryRecipe.ingredients.find((element) => element._id === req.params.ingredient_id);
+    const dbEntryIngredient = dbEntryRecipe.ingredients.find((element) => element._id.toString() === req.params.ingredient_id);
 
     if (!dbEntryIngredient) {
       res.sendStatus(404);

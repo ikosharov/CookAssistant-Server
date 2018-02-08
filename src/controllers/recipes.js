@@ -108,7 +108,7 @@ exports.putRecipe = function (req, res) {
     extractRecipeFromRequest(req, dbEntry, function (recipe) {
       recipe.save(function (err) {
         if (err)
-          send(err);
+          res.send(err);
         else
           res.sendStatus(204);
       });

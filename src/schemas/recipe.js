@@ -26,9 +26,8 @@ const schema = new Schema({
   },
   ingredients: [ ingredientSchema ],
   steps: [ stepSchema ],
-  image: { 
-    data: Types.Buffer,
-    contentType: String
+  imageId: {
+    type: Types.ObjectId
   },
   rating: {
     type: Types.Number,

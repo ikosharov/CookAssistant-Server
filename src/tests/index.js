@@ -471,9 +471,6 @@ describe('Routes', function () {
 
     describe("steps controller", function () {
         it('user should be able to add, update and delete step', function (done) {
-            let testsDir = path.resolve("tests");
-            let testImagePath = path.join(testsDir, "test.png");
-
             // add step to recipe
             request(url)
                 .post('/signin')
@@ -482,8 +479,7 @@ describe('Routes', function () {
                     let token = res.body.token;
                     request(url)
                         .post(`/recipes/${privateRecipeOfSharedUser._id}/steps`)
-                        .send(JSON.stringify({ title: 'step 1' }))
-                        .attach('image', testImagePath)
+                        .send({ title: 'step 1' })
                         .set('Authorization', `JWT ${token}`)
                         .end(function (err, res) {
                             if (err) {
@@ -493,14 +489,13 @@ describe('Routes', function () {
                             assert.equal(200, res.status);
                             assert(res.body._id);
                             assert(res.body.title);
-                            assert(res.body.image);
 
                             let step = res.body;
 
                             // update the step
                             request(url)
                                 .put(`/recipes/${privateRecipeOfSharedUser._id}/steps/${step._id}`)
-                                .send(JSON.stringify({ title: 'step 1 - altered' }))
+                                .send({ title: 'step 1 - altered' })
                                 .set('Authorization', `JWT ${token}`)
                                 .end(function (err, res) {
                                     if (err) {
