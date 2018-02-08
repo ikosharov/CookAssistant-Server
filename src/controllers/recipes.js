@@ -12,7 +12,7 @@ const prepareRecipeDetailsForTransmit = function (dbEntry) {
     rating: dbEntry.rating,
     ingredients: dbEntry.ingredients.map(i => prepareIngredientForTransmit(i)),
     steps: dbEntry.steps.map(s => prepareStepForTransmit(s)),
-    image_id: dbEntry.image_id
+    imageId: dbEntry.imageId
   }
 }
 
@@ -23,7 +23,7 @@ const prepareRecipeSummaryForTransmit = function (dbEntry) {
     title: dbEntry.title,
     isPublic: dbEntry.isPublic,
     rating: dbEntry.rating,
-    image_id: dbEntry.image_id
+    imageId: dbEntry.imageId
   }
 }
 

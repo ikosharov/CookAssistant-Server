@@ -27,7 +27,7 @@ const schema = new Schema({
   ingredients: [ ingredientSchema ],
   steps: [ stepSchema ],
   imageId: {
-    type: Types.ObjectId
+    type: Types.String
   },
   rating: {
     type: Types.Number,

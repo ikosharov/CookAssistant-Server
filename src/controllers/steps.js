@@ -11,7 +11,7 @@ const prepareStepForTransmit = function (dbEntry) {
   return {
     _id: dbEntry._id.toString(),
     title: dbEntry.title,
-    image_id: dbEntry.image_id
+    imageId: dbEntry.imageId
   };
 }
 
