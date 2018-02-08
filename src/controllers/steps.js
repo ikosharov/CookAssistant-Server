@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe');
 const Step = require('../models/step');
+const isEqual = require('lodash').isEqual
 
 const extractStepFromRequest = (req, dbEntry, callback) => {
   const step = (dbEntry != null) ? dbEntry : new Step();
@@ -28,7 +29,7 @@ exports.postStep = function (req, res) {
       return;
     }
 
-    if (dbEntryRecipe.userId !== req.user._id) {
+    if (!isEqual(dbEntryRecipe.userId, req.user._id)) {
       res.sendStatus(401);
       return;
     }
@@ -57,7 +58,7 @@ exports.putStep = function (req, res) {
       return;
     }
 
-    if (dbEntryRecipe.userId !== req.user._id) {
+    if (!isEqual(dbEntryRecipe.userId, req.user._id)) {
       res.sendStatus(401);
       return;
     }
@@ -97,7 +98,7 @@ exports.deleteStep = function (req, res) {
       return;
     }
 
-    if (dbEntryRecipe.userId !== req.user._id) {
+    if (!isEqual(dbEntryRecipe.userId, req.user._id)) {
       res.sendStatus(401);
       return;
     }

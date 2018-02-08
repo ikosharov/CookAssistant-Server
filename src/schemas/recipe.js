@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const Types = Schema.Types
 const ingredientSchema = require('./ingredient');
 const stepSchema = require('./step');
 
@@ -9,27 +11,27 @@ const ratingValidator = [
   "rating should be between 0 and 5 stars"
 ];
 
-const schema = new mongoose.Schema({
+const schema = new Schema({
   title: {
-    type: String,
+    type: Types.String,
     required: true
   },
   userId: {
-    type: String,
+    type: Types.ObjectId,
     required: true
   },
   isPublic: {
-    type: Boolean,
+    type: Types.Boolean,
     default: false
   },
   ingredients: [ ingredientSchema ],
   steps: [ stepSchema ],
   image: { 
-    data: Buffer,
+    data: Types.Buffer,
     contentType: String
   },
   rating: {
-    type: Number,
+    type: Types.Number,
     default: 0,
     validator: ratingValidator
   }

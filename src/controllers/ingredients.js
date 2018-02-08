@@ -1,5 +1,6 @@
 const Recipe = require('../models/recipe');
 const Ingredient = require('../models/ingredient');
+const isEqual = require('lodash').isEqual
 
 const extractIngredientFromRequest = function (req, dbEntry, callback) {
   const ingredient = (dbEntry != null) ? dbEntry : new Ingredient();
@@ -28,7 +29,7 @@ exports.postIngredient = function (req, res) {
       return;
     }
 
-    if (dbEntryRecipe.userId !== req.user._id) {
+    if (!isEqual(dbEntryRecipe.userId, req.user._id)) {
       res.sendStatus(401);
       return;
     }
@@ -57,7 +58,7 @@ exports.putIngredient = function (req, res) {
       return;
     }
 
-    if (dbEntryRecipe.userId !== req.user._id) {
+    if (!isEqual(dbEntryRecipe.userId, req.user._id)) {
       res.sendStatus(401);
       return;
     }
@@ -97,7 +98,7 @@ exports.deleteIngredient = function (req, res) {
       return;
     }
 
-    if (dbEntryRecipe.userId !== req.user._id) {
+    if (!isEqual(dbEntryRecipe.userId, req.user._id)) {
       res.sendStatus(401);
       return;
     }

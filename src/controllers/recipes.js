@@ -1,6 +1,7 @@
 const Recipe = require('../models/recipe');
 const prepareIngredientForTransmit = require('./ingredients').prepareIngredientForTransmit;
 const prepareStepForTransmit = require('./steps').prepareStepForTransmit;
+const isEqual = require('lodash').isEqual
 
 const prepareRecipeDetailsForTransmit = function (dbEntry) {
   return {
@@ -66,7 +67,7 @@ exports.getRecipe = function (req, res) {
       res.send(err);
     } else {
 
-      if (!recipe.isPublic && recipe.userId !== req.user._id) {
+      if (!recipe.isPublic && !isEqual(recipe.userId, req.user._id)) {
         // not allowed to request non-public recipes of other users
         res.sendStatus(401);
         return;
@@ -99,7 +100,7 @@ exports.putRecipe = function (req, res) {
       return;
     }
 
-    if (dbEntry.userId !== req.user._id) {
+    if (!isEqual(dbEntry.userId, req.user._id)) {
       res.sendStatus(401);
       return;
     }
@@ -127,7 +128,7 @@ exports.deleteRecipe = function (req, res) {
       return;
     }
 
-    if (recipe.userId !== req.user._id) {
+    if (!isEqual(recipe.userId, req.user._id)) {
       res.sendStatus(401);
       return;
     }
