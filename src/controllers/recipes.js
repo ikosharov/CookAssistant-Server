@@ -27,9 +27,9 @@ const prepareRecipeSummaryForTransmit = function (dbEntry) {
 }
 
 const extractRecipeFromRequest = function (req, dbEntry, callback) {
-  const recipe = (dbEntry != null) ? dbEntry : new Recipe();
-  const recipeFromRequest = JSON.parse(req.body);
-  callback({...recipe, ...recipeFromRequest});
+  let recipe = (dbEntry != null) ? dbEntry : new Recipe();
+  recipe.userId = req.user._id;
+  callback(Object.assign(recipe, req.body))
 }
 
 exports.getRecipes = function (req, res) {

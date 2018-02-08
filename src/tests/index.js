@@ -29,7 +29,7 @@ describe('Routes', function () {
                     request(url)
                         .post("/recipes")
                         .set('Authorization', 'JWT ' + token)
-                        .send(JSON.stringify(privateRecipeOfSharedUser))
+                        .send(privateRecipeOfSharedUser)
                         .end(function (err, res) {
                             if (err) reject();
                             privateRecipeOfSharedUser._id = res.body._id;
@@ -37,7 +37,7 @@ describe('Routes', function () {
                             request(url)
                                 .post("/recipes")
                                 .set('Authorization', 'JWT ' + token)
-                                .send(JSON.stringify(publicRecipeOfSharedUser))
+                                .send(publicRecipeOfSharedUser)
                                 .end(function (err, res) {
                                     if (err) reject();
                                     publicRecipeOfSharedUser._id = res.body._id;
@@ -66,7 +66,7 @@ describe('Routes', function () {
                     request(url)
                         .post("/recipes")
                         .set('Authorization', 'JWT ' + token)
-                        .send(JSON.stringify(privateRecipeOfOtherUser))
+                        .send(privateRecipeOfOtherUser)
                         .end(function (err, res) {
                             if (err) reject();
                             privateRecipeOfOtherUser._id = res.body._id;
@@ -74,7 +74,7 @@ describe('Routes', function () {
                             request(url)
                                 .post("/recipes")
                                 .set('Authorization', 'JWT ' + token)
-                                .send(JSON.stringify(publicRecipeOfOtherUser))
+                                .send(publicRecipeOfOtherUser)
                                 .end(function (err, res) {
                                     if (err) reject();
                                     publicRecipeOfOtherUser._id = res.body._id;
@@ -99,183 +99,184 @@ describe('Routes', function () {
 
     });
 
-    describe('welcome controller', function () {
-        it('should reply with hello message', function (done) {
-            request(url)
-                .get('/')
-                .end(function (err, res) {
-                    assert.equal(200, res.status);
-                    assert.equal('Hello from Recipes API', res.text);
-                    done();
-                });
-        });
-    });
-
-    describe('users controller', function () {
-        it('should be able to sign up users', function (done) {
-            let credentials = {
-                username: 'user' + generateRandomString(),
-                password: 'password1'
-            }
-
-            request(url)
-                .post('/signup')
-                .send(credentials)
-                .end(function (err, res) {
-                    if (err) {
-                        throw err;
-                    }
-
-                    assert.equal(200, res.status);
-                    assert(res.body.token);
-                    done();
-                });
-        });
-
-        it('should be able to sign in users', function (done) {
-            request(url)
-                .post('/signin')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    if (err) {
-                        throw err;
-                    }
-
-                    assert.equal(200, res.status);
-                    assert(res.body.token);
-                    done();
-                });
-        });
-
-        it('should not be able to overwrite users', function (done) {
-            // try to register the already registered shared user
-            request(url)
-                .post('/signup')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    assert(!res.body.token);
-                    done();
-                });
-        });
-
-        it('should not be able to sign up with missing password', function (done) {
-            let missingPasswordCredentials = {
-                username: "someuser"
-            };
-            request(url)
-                .post('/signup')
-                .send(missingPasswordCredentials)
-                .end(function (err, res) {
-                    assert(!res.body.token);
-                    done();
-                });
-        });
-
-        it('should not be able to sign in with wrong credentials', function (done) {
-            let invalidCredentials = {
-                username: sharedUser.username,
-                password: "ivalidPassword"
-            };
-            request(url)
-                .post('/signin')
-                .send(invalidCredentials)
-                .end(function (err, res) {
-                    assert(!res.body.token);
-                    done();
-                });
-        });
-
-        it('should not be able to sign in with missing password', function (done) {
-            let missingPasswordCredentials = {
-                username: "someuser"
-            };
-            request(url)
-                .post('/signin')
-                .send(missingPasswordCredentials)
-                .end(function (err, res) {
-                    assert(!res.body.token);
-                    done();
-                });
-        });
-    });
+    // describe('welcome controller', function () {
+    //     it('should reply with hello message', function (done) {
+    //         request(url)
+    //             .get('/')
+    //             .end(function (err, res) {
+    //                 assert.equal(200, res.status);
+    //                 assert.equal('Hello from Recipes API', res.text);
+    //                 done();
+    //             });
+    //     });
+    // });
+    //
+    // describe('users controller', function () {
+    //     it('should be able to sign up users', function (done) {
+    //         let credentials = {
+    //             username: 'user' + generateRandomString(),
+    //             password: 'password1'
+    //         }
+    //
+    //         request(url)
+    //             .post('/signup')
+    //             .send(credentials)
+    //             .end(function (err, res) {
+    //                 if (err) {
+    //                     throw err;
+    //                 }
+    //
+    //                 assert.equal(200, res.status);
+    //                 assert(res.body.token);
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('should be able to sign in users', function (done) {
+    //         request(url)
+    //             .post('/signin')
+    //             .send(sharedUser)
+    //             .end(function (err, res) {
+    //                 if (err) {
+    //                     throw err;
+    //                 }
+    //
+    //                 assert.equal(200, res.status);
+    //                 assert(res.body.token);
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('should not be able to overwrite users', function (done) {
+    //         // try to register the already registered shared user
+    //         request(url)
+    //             .post('/signup')
+    //             .send(sharedUser)
+    //             .end(function (err, res) {
+    //                 assert(!res.body.token);
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('should not be able to sign up with missing password', function (done) {
+    //         let missingPasswordCredentials = {
+    //             username: "someuser"
+    //         };
+    //         request(url)
+    //             .post('/signup')
+    //             .send(missingPasswordCredentials)
+    //             .end(function (err, res) {
+    //                 assert(!res.body.token);
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('should not be able to sign in with wrong credentials', function (done) {
+    //         let invalidCredentials = {
+    //             username: sharedUser.username,
+    //             password: "ivalidPassword"
+    //         };
+    //         request(url)
+    //             .post('/signin')
+    //             .send(invalidCredentials)
+    //             .end(function (err, res) {
+    //                 assert(!res.body.token);
+    //                 done();
+    //             });
+    //     });
+    //
+    //     it('should not be able to sign in with missing password', function (done) {
+    //         let missingPasswordCredentials = {
+    //             username: "someuser"
+    //         };
+    //         request(url)
+    //             .post('/signin')
+    //             .send(missingPasswordCredentials)
+    //             .end(function (err, res) {
+    //                 assert(!res.body.token);
+    //                 done();
+    //             });
+    //     });
+    // });
 
     describe("recipes controller", function () {
-        it('user should be able to get all public recipes', function (done) {
-            request(url)
-                .post('/signin')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    request(url)
-                        .get("/recipes?visibility=public")
-                        .set('Authorization', `JWT ${res.body.token}`)
-                        .expect('Content-Type', /json/)
-                        .end(function (err, res) {
-                            if (err) {
-                                throw err;
-                            }
-
-                            assert.equal(200, res.status);
-                            assert(Array.isArray(res.body));
-
-                            let recipes = res.body;
-                            assert(recipes.length > 0);
-                            recipes.forEach(function (recipe) {
-                                assert(recipe.isPublic);
-                            });
-                            done();
-                        });
-                });
-        });
-
-        it('user should be able to get all personal recipes', function (done) {
-            request(url)
-                .post('/signin')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    request(url)
-                        .get("/recipes?visibility=personal&user=current")
-                        .set('Authorization', `JWT ${res.body.token}`)
-                        .expect('Content-Type', /json/)
-                        .end(function (err, res) {
-                            if (err) {
-                                throw err;
-                            }
-
-                            assert.equal(200, res.status);
-                            assert(Array.isArray(res.body));
-
-                            let recipes = res.body;
-                            assert(recipes.length > 0);
-                            recipes.forEach(function (recipe) {
-                                assert.equal(sharedUser._id, recipe.userId);
-                            });
-                            done();
-                        });
-                });
-        });
-
-        it('user should be able to get specific public recipe', function (done) {
-            request(url)
-                .post('/signin')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    request(url)
-                        .get("/recipes/" + publicRecipeOfOtherUser._id)
-                        .set('Authorization', `JWT ${res.body.token}`)
-                        .expect('Content-Type', /json/)
-                        .end(function (err, res) {
-                            if (err) {
-                                throw err;
-                            }
-
-                            assert.equal(200, res.status);
-                            assert(res.body._id == publicRecipeOfOtherUser._id);
-                            done();
-                        });
-                });
-        });
+        // it('user should be able to get all public recipes', function (done) {
+        //     request(url)
+        //         .post('/signin')
+        //         .send(sharedUser)
+        //         .end(function (err, res) {
+        //             request(url)
+        //                 .get("/recipes?visibility=public")
+        //                 .set('Authorization', `JWT ${res.body.token}`)
+        //                 .expect('Content-Type', /json/)
+        //                 .end(function (err, res) {
+        //                     if (err) {
+        //                         throw err;
+        //                     }
+        //
+        //                     assert.equal(200, res.status);
+        //                     assert(Array.isArray(res.body));
+        //
+        //                     let recipes = res.body;
+        //                     assert(recipes.length > 0);
+        //                     recipes.forEach(function (recipe) {
+        //                         assert(recipe.isPublic);
+        //                     });
+        //                     done();
+        //                 });
+        //         });
+        // });
+        //
+        // it('user should be able to get all personal recipes', function (done) {
+        //     request(url)
+        //         .post('/signin')
+        //         .send(sharedUser)
+        //         .end(function (err, res) {
+        //             request(url)
+        //                 .get("/recipes?visibility=personal&user=current")
+        //                 .set('Authorization', `JWT ${res.body.token}`)
+        //                 .expect('Content-Type', /json/)
+        //                 .end(function (err, res) {
+        //                     if (err) {
+        //                         throw err;
+        //                     }
+        //
+        //                     assert.equal(200, res.status);
+        //                     assert(Array.isArray(res.body));
+        //
+        //                     let recipes = res.body;
+        //                     assert(recipes.length > 0);
+        //                     recipes.forEach(function (recipe) {
+        //                         assert.equal(sharedUser._id, recipe.userId);
+        //                     });
+        //                     done();
+        //                 });
+        //         });
+        // });
+        //
+        // it('user should be able to get specific public recipe', function (done) {
+        //     request(url)
+        //         .post('/signin')
+        //         .send(sharedUser)
+        //         .end(function (err, res) {
+        //             request(url)
+        //                 .get("/recipes/" + publicRecipeOfOtherUser._id)
+        //                 .set('Authorization', `JWT ${res.body.token}`)
+        //                 .expect('Content-Type', /json/)
+        //                 .end(function (err, res) {
+        //                     if (err) {
+        //                         throw err;
+        //                     }
+        //
+        //                     assert.equal(200, res.status);
+        //                     assert(res.body._id == publicRecipeOfOtherUser._id);
+        //                     done();
+        //                 });
+        //         });
+        // });
 
         it('user should be able to get specific personal recipe', function (done) {
+            console.log(privateRecipeOfSharedUser._id)
             request(url)
                 .post('/signin')
                 .send(sharedUser)
@@ -456,120 +457,120 @@ describe('Routes', function () {
                 });
         });
     });
-
-    describe("ingredients controller", function () {
-        it('user should be able to add, update and delete ingredient', function (done) {
-            let testsDir = path.resolve("tests");
-            let testImagePath = path.join(testsDir, "test.png");
-
-            // add ingredient to recipe
-            request(url)
-                .post('/signin')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    let token = res.body.token;
-                    request(url)
-                        .post(`/recipes/${privateRecipeOfSharedUser._id}/ingredients`)
-                        .send(JSON.stringify({ title: 'ingr 1' }))
-                        .attach('image', testImagePath)
-                        .set('Authorization', `JWT ${token}`)
-                        .end(function (err, res) {
-                            if (err) {
-                                throw err;
-                            }
-
-                            assert.equal(200, res.status);
-                            assert(res.body._id);
-                            assert(res.body.title);
-                            assert(res.body.image);
-
-                            let ingredient = res.body;
-
-                            // update the ingredient
-                            request(url)
-                                .put(`/recipes/${privateRecipeOfSharedUser._id}/ingredients/${ingredient._id}`)
-                                .send(JSON.stringify({ title: 'ingr 1 - altered' }))
-                                .set('Authorization', `JWT ${token}`)
-                                .end(function (err, res) {
-                                    if (err) {
-                                        throw err;
-                                    }
-
-                                    assert.equal(200, res.status);
-
-                                    // delete the ingredient
-                                    request(url)
-                                        .delete(`/recipes/${privateRecipeOfSharedUser._id}/ingredients/${ingredient._id}`)
-                                        .set('Authorization', `JWT ${token}`)
-                                        .end(function (err, res) {
-                                            if (err) {
-                                                throw err;
-                                            }
-
-                                            assert.equal(204, res.status);
-                                            done();
-                                        });
-                                });
-                        });
-                });
-        });
-    });
-
-    describe("steps controller", function () {
-        it('user should be able to add, update and delete step', function (done) {
-            let testsDir = path.resolve("tests");
-            let testImagePath = path.join(testsDir, "test.png");
-
-            // add step to recipe
-            request(url)
-                .post('/signin')
-                .send(sharedUser)
-                .end(function (err, res) {
-                    let token = res.body.token;
-                    request(url)
-                        .post(`/recipes/${privateRecipeOfSharedUser._id}/steps`)
-                        .send(JSON.stringify({ title: 'step 1' }))
-                        .attach('image', testImagePath)
-                        .set('Authorization', `JWT ${token}`)
-                        .end(function (err, res) {
-                            if (err) {
-                                throw err;
-                            }
-
-                            assert.equal(200, res.status);
-                            assert(res.body._id);
-                            assert(res.body.title);
-                            assert(res.body.image);
-
-                            let step = res.body;
-
-                            // update the step
-                            request(url)
-                                .put(`/recipes/${privateRecipeOfSharedUser._id}/steps/${step._id}`)
-                                .send(JSON.stringify({ title: 'step 1 - altered' }))
-                                .set('Authorization', `JWT ${token}`)
-                                .end(function (err, res) {
-                                    if (err) {
-                                        throw err;
-                                    }
-
-                                    assert.equal(200, res.status);
-
-                                    // delete the step
-                                    request(url)
-                                        .delete(`/recipes/${privateRecipeOfSharedUser._id}/steps/${step._id}`)
-                                        .set('Authorization', `JWT ${token}`)
-                                        .end(function (err, res) {
-                                            if (err) {
-                                                throw err;
-                                            }
-
-                                            assert.equal(204, res.status);
-                                            done();
-                                        });
-                                });
-                        });
-                });
-        });
-    });
+    //
+    // describe("ingredients controller", function () {
+    //     it('user should be able to add, update and delete ingredient', function (done) {
+    //         let testsDir = path.resolve("tests");
+    //         let testImagePath = path.join(testsDir, "test.png");
+    //
+    //         // add ingredient to recipe
+    //         request(url)
+    //             .post('/signin')
+    //             .send(sharedUser)
+    //             .end(function (err, res) {
+    //                 let token = res.body.token;
+    //                 request(url)
+    //                     .post(`/recipes/${privateRecipeOfSharedUser._id}/ingredients`)
+    //                     .send(JSON.stringify({ title: 'ingr 1' }))
+    //                     .attach('image', testImagePath)
+    //                     .set('Authorization', `JWT ${token}`)
+    //                     .end(function (err, res) {
+    //                         if (err) {
+    //                             throw err;
+    //                         }
+    //
+    //                         assert.equal(200, res.status);
+    //                         assert(res.body._id);
+    //                         assert(res.body.title);
+    //                         assert(res.body.image);
+    //
+    //                         let ingredient = res.body;
+    //
+    //                         // update the ingredient
+    //                         request(url)
+    //                             .put(`/recipes/${privateRecipeOfSharedUser._id}/ingredients/${ingredient._id}`)
+    //                             .send(JSON.stringify({ title: 'ingr 1 - altered' }))
+    //                             .set('Authorization', `JWT ${token}`)
+    //                             .end(function (err, res) {
+    //                                 if (err) {
+    //                                     throw err;
+    //                                 }
+    //
+    //                                 assert.equal(200, res.status);
+    //
+    //                                 // delete the ingredient
+    //                                 request(url)
+    //                                     .delete(`/recipes/${privateRecipeOfSharedUser._id}/ingredients/${ingredient._id}`)
+    //                                     .set('Authorization', `JWT ${token}`)
+    //                                     .end(function (err, res) {
+    //                                         if (err) {
+    //                                             throw err;
+    //                                         }
+    //
+    //                                         assert.equal(204, res.status);
+    //                                         done();
+    //                                     });
+    //                             });
+    //                     });
+    //             });
+    //     });
+    // });
+    //
+    // describe("steps controller", function () {
+    //     it('user should be able to add, update and delete step', function (done) {
+    //         let testsDir = path.resolve("tests");
+    //         let testImagePath = path.join(testsDir, "test.png");
+    //
+    //         // add step to recipe
+    //         request(url)
+    //             .post('/signin')
+    //             .send(sharedUser)
+    //             .end(function (err, res) {
+    //                 let token = res.body.token;
+    //                 request(url)
+    //                     .post(`/recipes/${privateRecipeOfSharedUser._id}/steps`)
+    //                     .send(JSON.stringify({ title: 'step 1' }))
+    //                     .attach('image', testImagePath)
+    //                     .set('Authorization', `JWT ${token}`)
+    //                     .end(function (err, res) {
+    //                         if (err) {
+    //                             throw err;
+    //                         }
+    //
+    //                         assert.equal(200, res.status);
+    //                         assert(res.body._id);
+    //                         assert(res.body.title);
+    //                         assert(res.body.image);
+    //
+    //                         let step = res.body;
+    //
+    //                         // update the step
+    //                         request(url)
+    //                             .put(`/recipes/${privateRecipeOfSharedUser._id}/steps/${step._id}`)
+    //                             .send(JSON.stringify({ title: 'step 1 - altered' }))
+    //                             .set('Authorization', `JWT ${token}`)
+    //                             .end(function (err, res) {
+    //                                 if (err) {
+    //                                     throw err;
+    //                                 }
+    //
+    //                                 assert.equal(200, res.status);
+    //
+    //                                 // delete the step
+    //                                 request(url)
+    //                                     .delete(`/recipes/${privateRecipeOfSharedUser._id}/steps/${step._id}`)
+    //                                     .set('Authorization', `JWT ${token}`)
+    //                                     .end(function (err, res) {
+    //                                         if (err) {
+    //                                             throw err;
+    //                                         }
+    //
+    //                                         assert.equal(204, res.status);
+    //                                         done();
+    //                                     });
+    //                             });
+    //                     });
+    //             });
+    //     });
+    // });
 });

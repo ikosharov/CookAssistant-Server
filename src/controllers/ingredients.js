@@ -3,8 +3,7 @@ const Ingredient = require('../models/ingredient');
 
 const extractIngredientFromRequest = function (req, dbEntry, callback) {
   const ingredient = (dbEntry != null) ? dbEntry : new Ingredient();
-  const ingredientFromRequest = JSON.parse(req.body);
-  callback({...ingredient, ...ingredientFromRequest});
+  callback(Object.assign(ingredient, req.body))
 }
 
 const prepareIngredientForTransmit = function (dbEntry) {

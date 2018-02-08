@@ -3,8 +3,7 @@ const Step = require('../models/step');
 
 const extractStepFromRequest = (req, dbEntry, callback) => {
   const step = (dbEntry != null) ? dbEntry : new Step();
-  const stepFromRequest = JSON.parse(req.body);
-  callback({...step, ...stepFromRequest});
+  callback(Object.assign(step, req.body))
 }
 
 const prepareStepForTransmit = function (dbEntry) {
